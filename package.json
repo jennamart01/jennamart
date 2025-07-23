@@ -7,7 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prebuild": "npm run typecheck && npm run lint",
+    "postbuild": "echo 'Build completed successfully'",
+    "clean": "rm -rf .next out node_modules/.cache",
+    "type-check": "tsc --noEmit",
+    "build:prod": "NODE_ENV=production npm run build"
   },
   "dependencies": {
     "@ionic/react": "^8.6.5",
