@@ -14,7 +14,9 @@
       "Bash(npm run test:build:*)",
       "Bash(npm run clean:*)",
       "Bash(npm uninstall:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(node:*)",
+      "Bash(curl:*)"
     ],
     "deny": []
   }
