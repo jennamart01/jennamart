@@ -10,7 +10,9 @@
       "Bash(npm run build:*)",
       "Bash(npm run lint)",
       "Bash(npm run typecheck:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(npm run test:build:*)",
+      "Bash(npm run clean:*)"
     ],
     "deny": []
   }

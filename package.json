@@ -3,16 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "NODE_ENV=development next dev",
     "build": "next build",
+    "build:dev": "NODE_ENV=development next build",
+    "build:prod": "NODE_ENV=production next build",
     "start": "next start",
+    "start:prod": "NODE_ENV=production next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "prebuild": "npm run typecheck && npm run lint",
     "postbuild": "echo 'Build completed successfully'",
     "clean": "rm -rf .next out node_modules/.cache",
     "type-check": "tsc --noEmit",
-    "build:prod": "NODE_ENV=production npm run build"
+    "test:build": "npm run build:dev && npm run build:prod"
   },
   "dependencies": {
     "@ionic/react": "^8.6.5",
