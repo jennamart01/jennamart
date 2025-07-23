@@ -12,7 +12,9 @@
       "Bash(npm run typecheck:*)",
       "Bash(find:*)",
       "Bash(npm run test:build:*)",
-      "Bash(npm run clean:*)"
+      "Bash(npm run clean:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(rm:*)"
     ],
     "deny": []
   }
