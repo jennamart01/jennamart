@@ -15,6 +15,10 @@ const options = {
   maxIdleTimeMS: 30000,
   retryWrites: true,
   w: 'majority',
+  ssl: true,
+  tls: true,
+  tlsAllowInvalidCertificates: false,
+  tlsAllowInvalidHostnames: false,
 };
 
 if (process.env.NODE_ENV === 'development') {
@@ -40,8 +44,16 @@ export class DatabaseService {
   }
 
   async getDatabase() {
-    const client = await clientPromise;
-    return client.db(this.dbName);
+    try {
+      const client = await clientPromise;
+      return client.db(this.dbName);
+    } catch (error) {
+      console.error('Database connection error:', error);
+      if (error.message.includes('SSL') || error.message.includes('TLS')) {
+        console.error('SSL/TLS connection failed. Check MongoDB Atlas SSL settings.');
+      }
+      throw error;
+    }
   }
 
   // Products collection operations
