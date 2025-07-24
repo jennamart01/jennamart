@@ -393,11 +393,6 @@ body {
     --border-radius: 16px 16px 0 0;
   }
   
-  /* Content padding for mobile */
-  .pos-content.ion-padding-horizontal {
-    --padding-start: 16px;
-    --padding-end: 16px;
-  }
 }
 
 /* Tablet breakpoint */

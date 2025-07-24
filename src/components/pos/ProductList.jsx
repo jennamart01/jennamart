@@ -259,7 +259,7 @@ const ProductList = forwardRef((props, ref) => {
             </IonButtons>
           </IonToolbar>
         </IonHeader>
-        <IonContent>
+        <IonContent padding={0}>
           <div className="p-4">
             <ProductForm 
               product={editingProduct}

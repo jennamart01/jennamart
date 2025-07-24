@@ -140,7 +140,7 @@ const ClientLayout = () => {
           </IonToolbar>
         </IonHeader>
         
-        <IonContent className="pos-content ion-padding-horizontal">
+        <IonContent className="pos-content" padding={0}>
           <div className="mobile-content-wrapper">
             {renderContent()}
           </div>

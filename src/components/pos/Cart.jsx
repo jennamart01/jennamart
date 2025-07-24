@@ -64,10 +64,16 @@ const Cart = () => {
       return;
     }
 
+    if (!customerName.trim()) {
+      setToastMessage('Customer name is required');
+      setShowToast(true);
+      return;
+    }
+
     setIsProcessing(true);
     try {
       const result = await processOrder({
-        customerName: customerName.trim() || 'Guest'
+        customerName: customerName.trim()
       });
       setToastMessage('Order processed successfully!');
       setShowToast(true);
@@ -86,7 +92,7 @@ const Cart = () => {
     <IonItemSliding key={item.productId}>
       <IonItem>
         <div className="w-full py-2">
-          <div className="flex justify-between items-start mb-2">
+          <div className="flex justify-between mb-2">
             <div className="flex-1">
               <h3 className="font-semibold text-lg">{item.name}</h3>
               <p className="text-sm text-gray-600">{formatRupiah(item.price)} each</p>
@@ -126,7 +132,18 @@ const Cart = () => {
               </IonButton>
             </div>
             
-            <IonBadge color="primary">
+            <IonBadge 
+              color="primary"
+              className="px-3 py-2 text-sm font-semibold"
+              style={{
+                fontSize: '14px',
+                fontWeight: '600',
+                padding: '8px 12px',
+                borderRadius: '12px',
+                minWidth: '60px',
+                textAlign: 'center'
+              }}
+            >
               Qty: {item.quantity}
             </IonBadge>
           </div>
@@ -173,24 +190,46 @@ const Cart = () => {
                     <CartItem key={item.productId} item={item} />
                   ))}
                 </IonList>
-              </IonCardContent>
-            </IonCard>
-
-            {/* Customer Information */}
-            <IonCard>
-              <IonCardHeader>
-                <IonCardTitle>Customer Information</IonCardTitle>
-              </IonCardHeader>
-              <IonCardContent>
-                <IonItem>
-                  <IonLabel position="stacked">Customer Name (Optional)</IonLabel>
-                  <IonInput
-                    value={customerName}
-                    onIonInput={(e) => setCustomerName(e.detail.value)}
-                    placeholder="Enter customer name or leave blank for Guest"
-                    className="mobile-input"
-                    clearInput
-                  />
+                
+                {/* Customer Information - Merged into cart items card */}
+                <IonItem 
+                  style={{ 
+                    '--padding': '0',
+                    '--inner-padding-start': '0',
+                    '--inner-padding-end': '0'
+                  }}
+                  className="customer-input-item"
+                >
+                  <div style={{ width: '100%', padding: '16px' }}>
+                    <IonLabel 
+                      position="stacked"
+                      style={{
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        color: '#3880ff',
+                        marginBottom: '8px'
+                      }}
+                    >
+                      Customer Name *
+                    </IonLabel>
+                    <IonInput
+                      value={customerName}
+                      onIonInput={(e) => setCustomerName(e.detail.value)}
+                      placeholder="Enter customer name"
+                      className="mobile-input"
+                      clearInput
+                      required
+                      style={{
+                        '--padding-start': '12px',
+                        '--padding-end': '12px',
+                        '--padding-top': '12px',
+                        '--padding-bottom': '12px',
+                        border: !customerName.trim() ? '2px solid #ff6b6b' : '2px solid #3880ff',
+                        borderRadius: '8px',
+                        backgroundColor: '#f8f9fa'
+                      }}
+                    />
+                  </div>
                 </IonItem>
               </IonCardContent>
             </IonCard>
@@ -241,7 +280,7 @@ const Cart = () => {
                     expand="block"
                     color="success"
                     onClick={() => setShowCheckoutAlert(true)}
-                    disabled={isProcessing}
+                    disabled={isProcessing || !customerName.trim()}
                   >
                     <IonIcon icon={checkmark} slot="start" />
                     {isProcessing ? 'Processing...' : 'Checkout'}
@@ -281,7 +320,7 @@ const Cart = () => {
         isOpen={showCheckoutAlert}
         onDidDismiss={() => setShowCheckoutAlert(false)}
         header="Confirm Order"
-        message={`Process order for ${formatRupiah(currentOrder.total)}?\n\nCustomer: ${customerName.trim() || 'Guest'}`}
+        message={`Process order for ${formatRupiah(currentOrder.total)}?\n\nCustomer: ${customerName.trim()}`}
         buttons={[
           {
             text: 'Cancel',
