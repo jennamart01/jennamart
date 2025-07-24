@@ -20,20 +20,9 @@ const TabBar = () => {
 
   const tabs = [
     {
-      id: 'products',
-      label: 'Manage',
-      icon: settings,
-    },
-    {
       id: 'order',
       label: 'Order',
       icon: bag,
-    },
-    {
-      id: 'cart',
-      label: 'Cart',
-      icon: cart,
-      badge: currentOrder.items.length > 0 ? `${currentOrder.items.length} items` : null,
     },
     {
       id: 'orders',

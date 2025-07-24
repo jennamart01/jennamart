@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useMemo, useCallback, useImperativeHandle, forwardRef } from 'react';
 import {
   IonCard,
   IonCardContent,
@@ -42,7 +42,7 @@ import usePOSStore from '@/stores/posStore';
 import ProductForm from './ProductForm';
 import { formatRupiah } from '@/utils/currency';
 
-const ProductList = () => {
+const ProductList = forwardRef((props, ref) => {
   const {
     products,
     isLoading,
@@ -97,6 +97,15 @@ const ProductList = () => {
       }
     }
   };
+
+  const handleAddProduct = useCallback(() => {
+    setEditingProduct(null);
+    setShowEditModal(true);
+  }, []);
+
+  useImperativeHandle(ref, () => ({
+    openAddProduct: handleAddProduct
+  }), [handleAddProduct]);
 
 
 
@@ -225,12 +234,6 @@ const ProductList = () => {
         </div>
       </div>
 
-      {/* Floating Action Button */}
-      <IonFab vertical="bottom" horizontal="end" slot="fixed">
-        <IonFabButton onClick={() => setShowEditModal(true)}>
-          <IonIcon icon={add} />
-        </IonFabButton>
-      </IonFab>
 
       {/* Edit/Add Product Modal */}
       <IonModal 
@@ -290,6 +293,6 @@ const ProductList = () => {
       />
     </>
   );
-};
+});
 
 export default ProductList;

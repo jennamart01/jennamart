@@ -17,7 +17,8 @@
       "Bash(rm:*)",
       "Bash(node:*)",
       "Bash(curl:*)",
-      "Bash(cp:*)"
+      "Bash(cp:*)",
+      "Bash(npx next:*)"
     ],
     "deny": []
   }

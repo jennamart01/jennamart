@@ -353,13 +353,31 @@ body {
   color: var(--ion-color-dark);
 }
 
-/* Mobile card optimizations */
+/* Mobile Responsive Enhancements */
+.mobile-content-wrapper {
+  padding: 0;
+  max-width: 100%;
+}
+
+/* Mobile first breakpoints */
 @media (max-width: 768px) {
+  /* Split pane should be disabled on mobile */
+  ion-split-pane {
+    --side-max-width: 100% !important;
+  }
+  
+  /* Menu should overlay on mobile */
+  ion-menu {
+    --width: 280px;
+  }
+  
+  /* Optimize cards for mobile */
   ion-card {
     margin: 8px !important;
     border-radius: 12px !important;
   }
   
+  /* Enhanced touch targets */
   ion-button {
     --min-height: 44px;
     font-size: 14px;
@@ -369,11 +387,76 @@ body {
     --size: 56px;
   }
   
-  /* Optimize modal for mobile */
+  /* Mobile modal optimization */
   ion-modal.mobile-modal {
     --height: 90vh;
     --border-radius: 16px 16px 0 0;
   }
+  
+  /* Content padding for mobile */
+  .pos-content.ion-padding-horizontal {
+    --padding-start: 16px;
+    --padding-end: 16px;
+  }
+}
+
+/* Tablet breakpoint */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .mobile-content-wrapper {
+    max-width: 100%;
+    padding: 0 16px;
+  }
+  
+  ion-menu {
+    --width: 300px;
+  }
+}
+
+/* Desktop breakpoint - split pane active */
+@media (min-width: 1025px) {
+  .mobile-content-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  
+  ion-menu {
+    --width: 320px;
+  }
+}
+
+/* Add Product Button Styling */
+.add-product-button-container {
+  position: absolute;
+  bottom: 70px; /* Above tab bar */
+  right: 16px;
+  z-index: 100;
+}
+
+.add-product-btn {
+  --background: var(--ion-color-primary);
+  --background-activated: var(--ion-color-primary-shade);
+  --color: white;
+  --border-radius: 24px;
+  --padding-start: 16px;
+  --padding-end: 20px;
+  --min-height: 48px;
+  font-weight: 500;
+  font-size: 14px;
+  box-shadow: 0 4px 16px rgba(56, 128, 255, 0.3);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.add-product-btn ion-icon {
+  font-size: 18px;
+  margin-right: 4px;
+}
+
+.add-product-btn:hover {
+  --background: var(--ion-color-primary-tint);
 }
 
 /* Order Product List Styling */
