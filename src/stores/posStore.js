@@ -150,7 +150,7 @@ const usePOSStore = create(
     });
   },
 
-  processOrder: async () => {
+  processOrder: async (orderData = {}) => {
     const { currentOrder } = get();
     if (currentOrder.items.length === 0) {
       throw new Error('Cart is empty');
@@ -160,6 +160,8 @@ const usePOSStore = create(
       const order = {
         items: currentOrder.items,
         total: currentOrder.total,
+        customerName: orderData.customerName || 'Guest',
+        createdAt: new Date(),
       };
       
       const result = await api.addOrder(order);
@@ -168,7 +170,6 @@ const usePOSStore = create(
       const printOrder = {
         ...order,
         orderNumber: `ORD-${Date.now()}`,
-        createdAt: new Date(),
       };
       
       set(state => ({
@@ -205,6 +206,7 @@ const usePOSStore = create(
             <h2>FreePos</h2>
             <p>Order #${order.orderNumber}</p>
             <p>${new Date(order.createdAt).toLocaleString()}</p>
+            <p>Customer: ${order.customerName || 'Guest'}</p>
           </div>
           ${order.items.map(item => `
             <div class="item">

@@ -50,12 +50,9 @@ const ProductList = () => {
     setProductFilter,
     fetchProducts,
     deleteProduct,
-    addToCart,
   } = usePOSStore();
 
   const [searchText, setSearchText] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('all');
-  const [sortBy, setSortBy] = useState('name');
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
@@ -73,38 +70,11 @@ const ProductList = () => {
   const filteredProducts = useMemo(() => {
     return products
       .filter(product => {
-        const matchesSearch = product.name.toLowerCase().includes(searchText.toLowerCase()) ||
-                             product.description?.toLowerCase().includes(searchText.toLowerCase());
-        const matchesCategory = categoryFilter === 'all' || product.category === categoryFilter;
-        return matchesSearch && matchesCategory;
-      })
-      .sort((a, b) => {
-        switch (sortBy) {
-          case 'name':
-            return a.name.localeCompare(b.name);
-          case 'price':
-            return a.price - b.price;
-          case 'stock':
-            return b.stock - a.stock;
-          case 'category':
-            return a.category.localeCompare(b.category);
-          default:
-            return 0;
-        }
+        const matchesSearch = product.name.toLowerCase().includes(searchText.toLowerCase());
+        return matchesSearch;
       });
-  }, [products, searchText, categoryFilter, sortBy]);
+  }, [products, searchText]);
 
-  const categories = [
-    { value: 'all', label: 'All Categories' },
-    { value: 'general', label: 'General' },
-    { value: 'food', label: 'Food & Beverages' },
-    { value: 'electronics', label: 'Electronics' },
-    { value: 'clothing', label: 'Clothing' },
-    { value: 'books', label: 'Books & Media' },
-    { value: 'health', label: 'Health & Beauty' },
-    { value: 'home', label: 'Home & Garden' },
-    { value: 'sports', label: 'Sports & Recreation' },
-  ];
 
   const handleEditProduct = useCallback((product) => {
     setEditingProduct(product);
@@ -128,25 +98,7 @@ const ProductList = () => {
     }
   };
 
-  const handleAddToCart = useCallback((product) => {
-    if (product.stock > 0) {
-      addToCart(product, 1);
-    }
-  }, [addToCart]);
 
-  const getCategoryColor = (category) => {
-    const colors = {
-      general: 'medium',
-      food: 'success',
-      electronics: 'primary',
-      clothing: 'secondary',
-      books: 'tertiary',
-      health: 'warning',
-      home: 'dark',
-      sports: 'danger',
-    };
-    return colors[category] || 'medium';
-  };
 
   const ProductCard = React.memo(function ProductCard({ product }) {
     return (
@@ -156,9 +108,6 @@ const ProductList = () => {
           <div className="flex-1">
             <IonCardTitle className="text-lg">{product.name}</IonCardTitle>
             <div className="flex items-center gap-2 mt-1">
-              <IonBadge color={getCategoryColor(product.category)}>
-                {product.category}
-              </IonBadge>
               <IonBadge color={product.stock > 0 ? 'success' : 'danger'}>
                 Stock: {product.stock}
               </IonBadge>
@@ -173,10 +122,6 @@ const ProductList = () => {
       </IonCardHeader>
       
       <IonCardContent>
-        {product.description && (
-          <p className="text-gray-600 mb-4">{product.description}</p>
-        )}
-        
         <IonGrid>
           <IonRow>
             <IonCol size="6">
@@ -202,20 +147,6 @@ const ProductList = () => {
               >
                 <IonIcon icon={trash} slot="start" />
                 Delete
-              </IonButton>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol size="12">
-              <IonButton
-                expand="block"
-                color="success"
-                className="touch-target"
-                disabled={product.stock === 0}
-                onClick={() => handleAddToCart(product)}
-              >
-                <IonIcon icon={cart} slot="start" />
-                {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
               </IonButton>
             </IonCol>
           </IonRow>
@@ -246,51 +177,14 @@ const ProductList = () => {
           <IonRefresherContent />
         </IonRefresher>
 
-        {/* Search and Filters */}
-        <div className="p-4 bg-white border-b">
+        {/* Search */}
+        <div className="p-4 bg-white border-b sticky top-0 z-10">
           <IonSearchbar
             value={searchText}
             onIonInput={(e) => setSearchText(e.detail.value)}
             placeholder="Search products..."
             showClearButton="focus"
           />
-          
-          <IonGrid>
-            <IonRow>
-              <IonCol size="12" sizeMd="6">
-                <IonItem>
-                  <IonIcon icon={funnel} slot="start" />
-                  <IonLabel>Category</IonLabel>
-                  <IonSelect
-                    value={categoryFilter}
-                    onSelectionChange={(e) => setCategoryFilter(e.detail.value)}
-                  >
-                    {categories.map(cat => (
-                      <IonSelectOption key={cat.value} value={cat.value}>
-                        {cat.label}
-                      </IonSelectOption>
-                    ))}
-                  </IonSelect>
-                </IonItem>
-              </IonCol>
-              
-              <IonCol size="12" sizeMd="6">
-                <IonItem>
-                  <IonIcon icon={storefront} slot="start" />
-                  <IonLabel>Sort by</IonLabel>
-                  <IonSelect
-                    value={sortBy}
-                    onSelectionChange={(e) => setSortBy(e.detail.value)}
-                  >
-                    <IonSelectOption value="name">Name</IonSelectOption>
-                    <IonSelectOption value="price">Price</IonSelectOption>
-                    <IonSelectOption value="stock">Stock</IonSelectOption>
-                    <IonSelectOption value="category">Category</IonSelectOption>
-                  </IonSelect>
-                </IonItem>
-              </IonCol>
-            </IonRow>
-          </IonGrid>
         </div>
 
         {/* Products Grid */}
@@ -309,11 +203,11 @@ const ProductList = () => {
             <div className="text-center py-8">
               <IonIcon icon={storefront} className="text-6xl text-gray-400 mb-4" />
               <h2 className="text-xl font-semibold text-gray-600 mb-2">
-                {searchText || categoryFilter !== 'all' ? 'No products found' : 'No products yet'}
+                {searchText ? 'No products found' : 'No products yet'}
               </h2>
               <p className="text-gray-500 mb-4">
-                {searchText || categoryFilter !== 'all' 
-                  ? 'Try adjusting your search or filters' 
+                {searchText 
+                  ? 'Try adjusting your search' 
                   : 'Add your first product to get started'}
               </p>
             </div>

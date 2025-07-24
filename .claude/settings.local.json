@@ -16,7 +16,8 @@
       "Bash(npm uninstall:*)",
       "Bash(rm:*)",
       "Bash(node:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(cp:*)"
     ],
     "deny": []
   }

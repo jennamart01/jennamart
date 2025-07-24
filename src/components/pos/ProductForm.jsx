@@ -7,10 +7,7 @@ import {
   IonItem,
   IonLabel,
   IonInput,
-  IonTextarea,
   IonButton,
-  IonSelect,
-  IonSelectOption,
   IonToast,
   IonGrid,
   IonRow,
@@ -28,8 +25,6 @@ const ProductForm = ({ product = null, onClose = () => {} }) => {
   const [formData, setFormData] = useState({
     name: product?.name || '',
     price: product?.price ? formatRupiah(product.price, false) : '',
-    description: product?.description || '',
-    category: product?.category || 'general',
     stock: product?.stock || '',
   });
 
@@ -80,8 +75,6 @@ const ProductForm = ({ product = null, onClose = () => {} }) => {
       const productData = {
         name: formData.name.trim(),
         price: parseRupiah(formData.price),
-        description: formData.description.trim(),
-        category: formData.category,
         stock: parseInt(formData.stock),
       };
 
@@ -95,8 +88,6 @@ const ProductForm = ({ product = null, onClose = () => {} }) => {
         setFormData({
           name: '',
           price: '',
-          description: '',
-          category: 'general',
           stock: '',
         });
       }
@@ -114,16 +105,6 @@ const ProductForm = ({ product = null, onClose = () => {} }) => {
     }
   };
 
-  const categories = [
-    { value: 'general', label: 'General' },
-    { value: 'food', label: 'Food & Beverages' },
-    { value: 'electronics', label: 'Electronics' },
-    { value: 'clothing', label: 'Clothing' },
-    { value: 'books', label: 'Books & Media' },
-    { value: 'health', label: 'Health & Beauty' },
-    { value: 'home', label: 'Home & Garden' },
-    { value: 'sports', label: 'Sports & Recreation' },
-  ];
 
   return (
     <>
@@ -170,22 +151,6 @@ const ProductForm = ({ product = null, onClose = () => {} }) => {
               <IonRow>
                 <IonCol size="12" sizeMd="6">
                   <IonItem>
-                    <IonLabel position="stacked">Category</IonLabel>
-                    <IonSelect
-                      value={formData.category}
-                      onSelectionChange={(e) => handleInputChange('category', e.detail.value)}
-                    >
-                      {categories.map(cat => (
-                        <IonSelectOption key={cat.value} value={cat.value}>
-                          {cat.label}
-                        </IonSelectOption>
-                      ))}
-                    </IonSelect>
-                  </IonItem>
-                </IonCol>
-                
-                <IonCol size="12" sizeMd="6">
-                  <IonItem>
                     <IonLabel position="stacked">Stock Quantity *</IonLabel>
                     <IonInput
                       type="number"
@@ -201,19 +166,6 @@ const ProductForm = ({ product = null, onClose = () => {} }) => {
                 </IonCol>
               </IonRow>
               
-              <IonRow>
-                <IonCol size="12">
-                  <IonItem>
-                    <IonLabel position="stacked">Description</IonLabel>
-                    <IonTextarea
-                      value={formData.description}
-                      onIonInput={(e) => handleInputChange('description', e.detail.value)}
-                      placeholder="Enter product description (optional)"
-                      rows={3}
-                    />
-                  </IonItem>
-                </IonCol>
-              </IonRow>
               
               <IonRow className="ion-margin-top">
                 <IonCol size="12" sizeMd="6">

@@ -47,6 +47,7 @@ const Cart = () => {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [customerName, setCustomerName] = useState('');
 
   const handleQuantityChange = (productId, newQuantity) => {
     if (newQuantity <= 0) {
@@ -65,10 +66,13 @@ const Cart = () => {
 
     setIsProcessing(true);
     try {
-      const result = await processOrder();
+      const result = await processOrder({
+        customerName: customerName.trim() || 'Guest'
+      });
       setToastMessage('Order processed successfully!');
       setShowToast(true);
       setShowCheckoutAlert(false);
+      setCustomerName(''); // Clear customer name after successful order
     } catch (error) {
       console.error('Error processing order:', error);
       setToastMessage('Error processing order. Please try again.');
@@ -172,6 +176,25 @@ const Cart = () => {
               </IonCardContent>
             </IonCard>
 
+            {/* Customer Information */}
+            <IonCard>
+              <IonCardHeader>
+                <IonCardTitle>Customer Information</IonCardTitle>
+              </IonCardHeader>
+              <IonCardContent>
+                <IonItem>
+                  <IonLabel position="stacked">Customer Name (Optional)</IonLabel>
+                  <IonInput
+                    value={customerName}
+                    onIonInput={(e) => setCustomerName(e.detail.value)}
+                    placeholder="Enter customer name or leave blank for Guest"
+                    className="mobile-input"
+                    clearInput
+                  />
+                </IonItem>
+              </IonCardContent>
+            </IonCard>
+
             {/* Order Summary */}
             <IonCard>
               <IonCardHeader>
@@ -258,7 +281,7 @@ const Cart = () => {
         isOpen={showCheckoutAlert}
         onDidDismiss={() => setShowCheckoutAlert(false)}
         header="Confirm Order"
-        message={`Process order for ${formatRupiah(currentOrder.total)}?`}
+        message={`Process order for ${formatRupiah(currentOrder.total)}?\n\nCustomer: ${customerName.trim() || 'Guest'}`}
         buttons={[
           {
             text: 'Cancel',

@@ -92,8 +92,7 @@ const OrderProductList = React.memo(() => {
   }, []);
 
   const filteredProducts = products.filter(product =>
-    product.name.toLowerCase().includes(searchText.toLowerCase()) ||
-    product.category?.toLowerCase().includes(searchText.toLowerCase())
+    product.name.toLowerCase().includes(searchText.toLowerCase())
   );
 
   const getStockBadgeColor = (stock) => {
@@ -131,7 +130,7 @@ const OrderProductList = React.memo(() => {
         <IonSearchbar
           value={searchText}
           onIonInput={(e) => setSearchText(e.detail.value)}
-          placeholder="Search products by name or category..."
+          placeholder="Search products by name..."
           className="mobile-input"
           showClearButton="focus"
           debounce={300}
@@ -180,20 +179,6 @@ const OrderProductList = React.memo(() => {
                   </IonCardHeader>
 
                   <IonCardContent>
-                    {product.description && (
-                      <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-                        {product.description}
-                      </p>
-                    )}
-
-                    {product.category && (
-                      <div className="mb-3">
-                        <IonBadge color="medium" fill="outline">
-                          {product.category}
-                        </IonBadge>
-                      </div>
-                    )}
-
                     <IonButton
                       expand="block"
                       onClick={() => handleAddToCart(product)}

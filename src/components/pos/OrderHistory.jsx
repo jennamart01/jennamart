@@ -63,6 +63,7 @@ const OrderHistory = () => {
   const filteredOrders = orders
     .filter(order => {
       const matchesSearch = order.orderNumber.toLowerCase().includes(searchText.toLowerCase()) ||
+                           (order.customerName && order.customerName.toLowerCase().includes(searchText.toLowerCase())) ||
                            order.items.some(item => 
                              item.name.toLowerCase().includes(searchText.toLowerCase())
                            );
@@ -95,12 +96,19 @@ const OrderHistory = () => {
             <IonCardTitle className="text-lg">
               Order #{order.orderNumber}
             </IonCardTitle>
-            <div className="flex items-center gap-2 mt-1">
-              <IonIcon icon={calendar} className="text-sm" />
-              <span className="text-sm text-gray-600">
-                {new Date(order.createdAt).toLocaleDateString()} at{' '}
-                {new Date(order.createdAt).toLocaleTimeString()}
-              </span>
+            <div className="space-y-1 mt-1">
+              <div className="flex items-center gap-2">
+                <IonIcon icon={calendar} className="text-sm" />
+                <span className="text-sm text-gray-600">
+                  {new Date(order.createdAt).toLocaleDateString()} at{' '}
+                  {new Date(order.createdAt).toLocaleTimeString()}
+                </span>
+              </div>
+              {order.customerName && (
+                <div className="text-sm text-gray-600">
+                  Customer: <span className="font-medium">{order.customerName}</span>
+                </div>
+              )}
             </div>
           </div>
           <div className="text-right">
@@ -184,7 +192,7 @@ const OrderHistory = () => {
         <IonSearchbar
           value={searchText}
           onIonInput={(e) => setSearchText(e.detail.value)}
-          placeholder="Search orders..."
+          placeholder="Search orders by number, customer name, or items..."
           showClearButton="focus"
         />
         
