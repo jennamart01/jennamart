@@ -203,7 +203,7 @@ const usePOSStore = create(
         </head>
         <body>
           <div class="header">
-            <h2>FreePos</h2>
+            <h2>Jennamart</h2>
             <p>Order #${order.orderNumber}</p>
             <p>${new Date(order.createdAt).toLocaleString()}</p>
             <p>Customer: ${order.customerName || 'Guest'}</p>

@@ -469,3 +469,15 @@ body {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* Customer Input Styling */
+.customer-input-card {
+  --background: #f0f8ff;
+  --border-radius: 8px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 8px;
+  --padding-bottom: 8px;
+  border: 1px solid #d1e8ff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}

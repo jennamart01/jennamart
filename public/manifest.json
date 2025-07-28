@@ -1,7 +1,7 @@
 {
-  "name": "FreePos - Point of Sale System",
-  "short_name": "FreePos",
-  "description": "A modern, free point of sale system for small businesses",
+  "name": "Jennamart - Point of Sale System",
+  "short_name": "Jennamart",
+  "description": "A simple and modern Point of Sale (POS) system built with Next.js, Ionic, and Zustand.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -79,40 +79,18 @@
   ],
   "shortcuts": [
     {
-      "name": "New Order",
-      "short_name": "Order",
-      "description": "Start a new customer order",
-      "url": "/?tab=order",
-      "icons": [
-        {
-          "src": "/icons/shortcut-order.png",
-          "sizes": "96x96"
-        }
-      ]
+      "name": "Jennamart Desktop View",
+      "short_name": "Desktop",
+      "description": "View Jennamart on desktop or tablet",
+      "url": "/?utm_source=pwa_install",
+      "icons": [{"src": "/icons/icon-192x192.png", "sizes": "192x192"}]
     },
     {
-      "name": "View Cart",
-      "short_name": "Cart",
-      "description": "View shopping cart",
-      "url": "/?tab=cart",
-      "icons": [
-        {
-          "src": "/icons/shortcut-cart.png",
-          "sizes": "96x96"
-        }
-      ]
-    },
-    {
-      "name": "Order History",
-      "short_name": "History",
-      "description": "View order history",
-      "url": "/?tab=orders",
-      "icons": [
-        {
-          "src": "/icons/shortcut-history.png",
-          "sizes": "96x96"
-        }
-      ]
+      "name": "Jennamart Mobile View",
+      "short_name": "Mobile",
+      "description": "View Jennamart on mobile devices",
+      "url": "/?utm_source=pwa_install",
+      "icons": [{"src": "/icons/icon-192x192.png", "sizes": "192x192"}]
     }
   ],
   "related_applications": [],

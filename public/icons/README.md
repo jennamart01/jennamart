@@ -1,6 +1,7 @@
 # PWA Icons
 
-This directory contains the Progressive Web App (PWA) icons for FreePos.
+This directory contains the Progressive Web App (PWA) icons for Jennamart.
+These icons are used across various platforms and devices when the PWA is installed,
 
 ## Required Icon Sizes
 

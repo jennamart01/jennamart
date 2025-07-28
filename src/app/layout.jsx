@@ -4,8 +4,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "FreePos - Simple POS System",
-  description: "Mobile-first Point of Sale system for small businesses",
+  title: "Jennamart - Simple POS System",
+  description: "A simple and modern Point of Sale (POS) system built with Next.js, Ionic, and Zustand.",
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,

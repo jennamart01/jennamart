@@ -1,4 +1,4 @@
-const CACHE_NAME = 'freepos-v1';
+const CACHE_NAME = 'jennamart-v1';
 const urlsToCache = [
   '/',
   '/manifest.json',

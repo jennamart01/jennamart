@@ -90,7 +90,7 @@ const ClientLayout = () => {
       case 'reports':
         return 'Reports';
       default:
-        return 'FreePos';
+        return 'Jennamart';
     }
   };
 
@@ -100,7 +100,7 @@ const ClientLayout = () => {
         <IonMenu side="start" menuId="main-menu" contentId="main-content" type="overlay">
           <IonHeader>
             <IonToolbar color="primary">
-              <IonTitle>FreePos Menu</IonTitle>
+              <IonTitle>Jennamart Menu</IonTitle>
             </IonToolbar>
           </IonHeader>
           <IonContent>

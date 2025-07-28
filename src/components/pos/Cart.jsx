@@ -16,9 +16,6 @@ import {
   IonAlert,
   IonToast,
   IonList,
-  IonItemSliding,
-  IonItemOptions,
-  IonItemOption,
 } from '@ionic/react';
 import {
   add,
@@ -89,77 +86,166 @@ const Cart = () => {
   };
 
   const CartItem = ({ item }) => (
-    <IonItemSliding key={item.productId}>
-      <IonItem>
-        <div className="w-full py-2">
-          <div className="flex justify-between mb-2">
-            <div className="flex-1">
-              <h3 className="font-semibold text-lg">{item.name}</h3>
-              <p className="text-sm text-gray-600">{formatRupiah(item.price)} each</p>
-            </div>
-            <div className="text-right">
-              <div className="text-lg font-bold">
-                {formatRupiah(item.price * item.quantity)}
-              </div>
-            </div>
-          </div>
-          
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <IonButton
-                fill="outline"
-                size="small"
-                onClick={() => handleQuantityChange(item.productId, item.quantity - 1)}
-              >
-                <IonIcon icon={remove} />
-              </IonButton>
-              
-              <IonInput
-                type="number"
-                inputmode="numeric"
-                min="1"
-                value={item.quantity}
-                onIonInput={(e) => handleQuantityChange(item.productId, parseInt(e.detail.value) || 1)}
-                className="w-16 text-center mobile-input touch-target"
-              />
-              
-              <IonButton
-                fill="outline"
-                size="small"
-                onClick={() => handleQuantityChange(item.productId, item.quantity + 1)}
-              >
-                <IonIcon icon={add} />
-              </IonButton>
-            </div>
-            
-            <IonBadge 
-              color="primary"
-              className="px-3 py-2 text-sm font-semibold"
-              style={{
-                fontSize: '14px',
-                fontWeight: '600',
-                padding: '8px 12px',
-                borderRadius: '12px',
-                minWidth: '60px',
-                textAlign: 'center'
+    <IonItem 
+      key={item.productId}
+      className="cart-item"
+      style={{
+        '--inner-padding-end': '16px',
+        '--inner-padding-start': '16px',
+        '--inner-padding-top': '12px',
+        '--inner-padding-bottom': '12px',
+        '--border-width': '0 0 1px 0',
+        '--border-color': '#e5e5e5',
+        margin: '0 0 8px 0'
+      }}
+    >
+      <div className="w-full">
+        {/* Header: Product Name, Price, Total, Delete */}
+        <div 
+          className="flex justify-between items-start"
+          style={{ marginBottom: '12px' }}
+        >
+          <div className="flex-1" style={{ paddingRight: '16px' }}>
+            <h3 
+              className="font-semibold text-lg"
+              style={{ 
+                margin: '0 0 4px 0',
+                lineHeight: '1.3',
+                fontSize: '18px'
               }}
             >
-              Qty: {item.quantity}
-            </IonBadge>
+              {item.name}
+            </h3>
+            <p 
+              className="text-sm text-gray-600"
+              style={{ 
+                margin: '0',
+                fontSize: '13px',
+                color: '#666'
+              }}
+            >
+              {formatRupiah(item.price)} each
+            </p>
+          </div>
+          <div 
+            className="text-right flex items-center"
+            style={{ gap: '12px' }}
+          >
+            <div 
+              className="text-lg font-bold"
+              style={{
+                fontSize: '18px',
+                fontWeight: '700',
+                color: '#2563eb',
+                minWidth: '80px',
+                textAlign: 'right'
+              }}
+            >
+              {formatRupiah(item.price * item.quantity)}
+            </div>
+            <IonButton
+              fill="clear"
+              size="small"
+              color="danger"
+              onClick={() => removeFromCart(item.productId)}
+              style={{
+                '--padding-start': '8px',
+                '--padding-end': '8px',
+                '--padding-top': '8px',
+                '--padding-bottom': '8px',
+                margin: '0',
+                minHeight: '36px',
+                minWidth: '36px'
+              }}
+            >
+              <IonIcon icon={trash} />
+            </IonButton>
           </div>
         </div>
-      </IonItem>
-      
-      <IonItemOptions side="end">
-        <IonItemOption 
-          color="danger" 
-          onClick={() => removeFromCart(item.productId)}
+        
+        {/* Footer: Quantity Controls and Badge */}
+        <div 
+          className="flex items-center justify-between"
+          style={{ paddingTop: '8px' }}
         >
-          <IonIcon icon={trash} />
-          Remove
-        </IonItemOption>
-      </IonItemOptions>
-    </IonItemSliding>
+          <div 
+            className="flex items-center"
+            style={{ gap: '8px' }}
+          >
+            <IonButton
+              fill="outline"
+              size="small"
+              onClick={() => handleQuantityChange(item.productId, item.quantity - 1)}
+              style={{
+                '--padding-start': '12px',
+                '--padding-end': '12px',
+                '--padding-top': '8px',
+                '--padding-bottom': '8px',
+                margin: '0',
+                minHeight: '36px',
+                minWidth: '36px'
+              }}
+            >
+              <IonIcon icon={remove} />
+            </IonButton>
+            
+            <IonInput
+              type="number"
+              inputmode="numeric"
+              min="1"
+              value={item.quantity}
+              onIonInput={(e) => handleQuantityChange(item.productId, parseInt(e.detail.value) || 1)}
+              className="quantity-input"
+              style={{
+                '--padding-start': '8px',
+                '--padding-end': '8px',
+                '--padding-top': '6px',
+                '--padding-bottom': '6px',
+                width: '64px',
+                textAlign: 'center',
+                fontSize: '16px',
+                fontWeight: '600',
+                border: '1px solid #d1d5db',
+                borderRadius: '6px',
+                margin: '0 4px'
+              }}
+            />
+            
+            <IonButton
+              fill="outline"
+              size="small"
+              onClick={() => handleQuantityChange(item.productId, item.quantity + 1)}
+              style={{
+                '--padding-start': '12px',
+                '--padding-end': '12px',
+                '--padding-top': '8px',
+                '--padding-bottom': '8px',
+                margin: '0',
+                minHeight: '36px',
+                minWidth: '36px'
+              }}
+            >
+              <IonIcon icon={add} />
+            </IonButton>
+          </div>
+          
+          <IonBadge 
+            color="primary"
+            style={{
+              fontSize: '13px',
+              fontWeight: '600',
+              padding: '6px 12px',
+              borderRadius: '12px',
+              minWidth: '60px',
+              textAlign: 'center',
+              margin: '0'
+            }}
+          >
+            Qty: {item.quantity}
+          </IonBadge>
+        </div>
+      </div>
+    </IonItem>
   );
 
   return (
@@ -177,62 +263,23 @@ const Cart = () => {
           </div>
         ) : (
           <div className="p-4">
+            {/* Customer Name Input */}
+            <IonItem className="mb-4 customer-input-card">
+              <IonInput
+                label="Customer Name"
+                labelPlacement="floating"
+                value={customerName}
+                onIonInput={(e) => setCustomerName(e.detail.value)}
+                placeholder="Enter customer name"
+              ></IonInput>
+            </IonItem>
+
             {/* Cart Items */}
-            <IonCard>
-              <IonCardHeader>
-                <IonCardTitle>
-                  Cart Items ({currentOrder.items.length})
-                </IonCardTitle>
-              </IonCardHeader>
-              <IonCardContent>
-                <IonList>
-                  {currentOrder.items.map(item => (
-                    <CartItem key={item.productId} item={item} />
-                  ))}
-                </IonList>
-                
-                {/* Customer Information - Merged into cart items card */}
-                <IonItem 
-                  style={{ 
-                    '--padding': '0',
-                    '--inner-padding-start': '0',
-                    '--inner-padding-end': '0'
-                  }}
-                  className="customer-input-item"
-                >
-                  <div style={{ width: '100%', padding: '16px' }}>
-                    <IonLabel 
-                      position="stacked"
-                      style={{
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        color: '#3880ff',
-                        marginBottom: '8px'
-                      }}
-                    >
-                      Customer Name *
-                    </IonLabel>
-                    <IonInput
-                      value={customerName}
-                      onIonInput={(e) => setCustomerName(e.detail.value)}
-                      placeholder="Enter customer name"
-                      className="mobile-input"
-                      clearInput
-                      required
-                      style={{
-                        '--padding-start': '12px',
-                        '--padding-end': '12px',
-                        '--padding-top': '12px',
-                        '--padding-bottom': '12px',
-                        border: !customerName.trim() ? '2px solid #ff6b6b' : '2px solid #3880ff',
-                        borderRadius: '8px',
-                        backgroundColor: '#f8f9fa'
-                      }}
-                    />
-                  </div>
-                </IonItem>
-              </IonCardContent>
-            </IonCard>
+            <IonList className="mb-6">
+              {currentOrder.items.map(item => (
+                <CartItem key={item.productId} item={item} />
+              ))}
+            </IonList>
 
             {/* Order Summary */}
             <IonCard>
@@ -252,7 +299,7 @@ const Cart = () => {
                   
                   <div className="flex justify-between items-center">
                     <span className="text-lg font-bold">Total:</span>
-                    <span className="text-2xl font-bold text-primary">
+                    <span className="2xl font-bold text-primary">
                       {formatRupiah(currentOrder.total)}
                     </span>
                   </div>

@@ -93,9 +93,12 @@ const OrderHistory = () => {
       <IonCardHeader>
         <div className="flex justify-between items-start">
           <div>
-            <IonCardTitle className="text-lg">
-              Order #{order.orderNumber}
-            </IonCardTitle>
+            {order.customerName && (
+              <IonCardTitle className="mb-1 text-xl font-bold">
+                Customer: {order.customerName}
+              </IonCardTitle>
+            )}
+            
             <div className="space-y-1 mt-1">
               <div className="flex items-center gap-2">
                 <IonIcon icon={calendar} className="text-sm" />
@@ -104,12 +107,7 @@ const OrderHistory = () => {
                   {new Date(order.createdAt).toLocaleTimeString()}
                 </span>
               </div>
-              {order.customerName && (
-                <div className="text-sm text-gray-600">
-                  Customer: <span className="font-medium">{order.customerName}</span>
-                </div>
-              )}
-            </div>
+            </div> 
           </div>
           <div className="text-right">
             <div className="text-2xl font-bold text-primary">

@@ -1,24 +1,12 @@
 # PWA Screenshots
 
-This directory contains screenshots for the Progressive Web App (PWA) app store listings.
+This directory contains screenshots demonstrating the Jennamart application's user interface and functionality across different devices (desktop and mobile).
 
-## Required Screenshots
+**Desktop View (`desktop-view.png`)**:
+- **Description**: Shows Jennamart running on desktop/tablet
 
-The following screenshots enhance the PWA installation experience:
-
-### Desktop Screenshot
-- **File**: desktop.png
-- **Size**: 1280x720 pixels
-- **Format**: PNG
-- **Form Factor**: wide
-- **Description**: Shows FreePos running on desktop/tablet
-
-### Mobile Screenshot  
-- **File**: mobile.png
-- **Size**: 390x844 pixels
-- **Format**: PNG  
-- **Form Factor**: narrow
-- **Description**: Shows FreePos running on mobile device
+**Mobile View (`mobile-view.png`)**:
+- **Description**: Shows Jennamart running on mobile device
 
 ## Screenshot Guidelines
 
