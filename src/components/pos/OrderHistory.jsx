@@ -151,8 +151,8 @@ const OrderHistory = () => {
           <IonRow>
             <IonCol size="12">
               <IonButton
+                className="ion-color-primary-gradient"
                 expand="block"
-                fill="outline"
                 onClick={() => handlePrintReceipt(order)}
               >
                 <IonIcon icon={print} slot="start" />

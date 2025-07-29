@@ -173,7 +173,7 @@ const Cart = () => {
             style={{ gap: '8px' }}
           >
             <IonButton
-              fill="outline"
+              className="ion-color-primary-gradient"
               size="small"
               onClick={() => handleQuantityChange(item.productId, item.quantity - 1)}
               style={{
@@ -212,7 +212,7 @@ const Cart = () => {
             />
             
             <IonButton
-              fill="outline"
+              className="ion-color-primary-gradient"
               size="small"
               onClick={() => handleQuantityChange(item.productId, item.quantity + 1)}
               style={{
@@ -312,9 +312,8 @@ const Cart = () => {
               <IonRow>
                 <IonCol size="12" sizeMd="6">
                   <IonButton
+                    className="ion-color-primary-gradient"
                     expand="block"
-                    fill="outline"
-                    color="danger"
                     onClick={() => setShowClearAlert(true)}
                     disabled={isProcessing}
                   >
@@ -324,8 +323,8 @@ const Cart = () => {
                 </IonCol>
                 <IonCol size="12" sizeMd="6">
                   <IonButton
+                    className="ion-color-primary-gradient"
                     expand="block"
-                    color="success"
                     onClick={() => setShowCheckoutAlert(true)}
                     disabled={isProcessing || !customerName.trim()}
                   >

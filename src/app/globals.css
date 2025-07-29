@@ -35,15 +35,17 @@
   --pos-gray-500: #6b7280;
   --pos-gray-600: #4b5563;
   
+  --pos-gradient-primary: linear-gradient(to right, #ffac00ff, #ff00d2ff);
+
   /* Ionic CSS variables for theming */
-  --ion-color-primary: #3880ff;
-  --ion-color-primary-rgb: 56, 128, 255;
+  --ion-color-primary: #ffac00;
+  --ion-color-primary-rgb: 255, 172, 0;
   --ion-color-primary-contrast: #ffffff;
   --ion-color-primary-contrast-rgb: 255, 255, 255;
   --ion-color-primary-shade: #3171e0;
   --ion-color-primary-tint: #4c8dff;
 
-  --ion-color-secondary: #3dc2ff;
+  --ion-color-secondary: #ff00d2ff;
   --ion-color-secondary-rgb: 61, 194, 255;
   --ion-color-secondary-contrast: #ffffff;
   --ion-color-secondary-contrast-rgb: 255, 255, 255;
@@ -193,7 +195,11 @@ body {
 }
 
 .text-primary {
-  color: var(--ion-color-primary);
+  background: var(--pos-gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent; /* Fallback for browsers that don't support background-clip: text */
 }
 
 .bg-white {
@@ -429,20 +435,7 @@ body {
 }
 
 .add-product-btn {
-  --background: var(--ion-color-primary);
-  --background-activated: var(--ion-color-primary-shade);
-  --color: white;
-  --border-radius: 24px;
-  --padding-start: 16px;
-  --padding-end: 20px;
-  --min-height: 48px;
-  font-weight: 500;
-  font-size: 14px;
-  box-shadow: 0 4px 16px rgba(56, 128, 255, 0.3);
-  backdrop-filter: blur(10px);
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  background: var(--pos-gradient-primary); 
 }
 
 .add-product-btn ion-icon {
@@ -451,7 +444,8 @@ body {
 }
 
 .add-product-btn:hover {
-  --background: var(--ion-color-primary-tint);
+  background: linear-gradient(to right, #e09900ff, #e000b9ff); /* Slightly darker gradient on hover */
+  --background: initial;
 }
 
 /* Order Product List Styling */
@@ -480,4 +474,26 @@ body {
   --padding-bottom: 8px;
   border: 1px solid #d1e8ff;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Global IonButton Primary Gradient Style */
+ion-button.ion-color-primary-gradient {
+  --background: var(--pos-gradient-primary);
+  --background-activated: linear-gradient(to right, #e09900ff, #e000b9ff); /* Slightly darker gradient on active/hover */
+  --color: var(--ion-color-primary-contrast);
+  --box-shadow: 0 4px 16px rgba(255, 172, 0, 0.3);
+  /* Optionally remove default Ionic button styles that might conflict */
+  --border-radius: 8px; /* Example: slightly rounded corners */
+}
+
+ion-button.ion-color-primary-gradient::part(native) {
+  background: var(--pos-gradient-primary);
+}
+
+ion-button.ion-color-primary-gradient:hover::part(native) {
+  background: linear-gradient(to right, #e09900ff, #e000b9ff); 
+}
+
+ion-button.ion-color-primary-gradient:active::part(native) {
+  background: linear-gradient(to right, #e09900ff, #e000b9ff); 
 }

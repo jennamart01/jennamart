@@ -135,10 +135,9 @@ const ProductList = forwardRef((props, ref) => {
           <IonRow>
             <IonCol size="6">
               <IonButton
-                expand="block"
-                fill="outline"
-                size="small"
                 className="touch-target"
+                expand="block"
+                size="small"
                 onClick={() => handleEditProduct(product)}
               >
                 <IonIcon icon={create} slot="start" />
@@ -147,11 +146,10 @@ const ProductList = forwardRef((props, ref) => {
             </IonCol>
             <IonCol size="6">
               <IonButton
+                className="touch-target  "
                 expand="block"
                 color="danger"
-                fill="outline"
                 size="small"
-                className="touch-target"
                 onClick={() => handleDeleteClick(product)}
               >
                 <IonIcon icon={trash} slot="start" />

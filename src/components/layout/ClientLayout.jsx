@@ -128,7 +128,6 @@ const ClientLayout = () => {
               fill="clear" 
               slot="end"
               onClick={() => setActiveTab('cart')}
-              className="header-cart-btn"
             >
               <IonIcon icon={cart} />
               {currentOrder.items.length > 0 && (
@@ -152,18 +151,18 @@ const ClientLayout = () => {
           {/* Add Product Button - Only on products page */}
           {activeTab === 'products' && (
             <div className="add-product-button-container">
-              <IonButton 
-                fill="clear" 
-                className="add-product-btn"
-                onClick={() => {
-                  if (productListRef.current) {
-                    productListRef.current.openAddProduct();
-                  }
-                }}
-              >
-                <IonIcon icon={add} slot="start" />
-                Add Product
-              </IonButton>
+              <IonFab horizontal="end" vertical="bottom">
+                <IonFabButton
+                  color="secondary"
+                  onClick={() => {
+                    if (productListRef.current) {
+                      productListRef.current.openAddProduct();
+                    }
+                  }}
+                >
+                  <IonIcon icon={add} />
+                </IonFabButton>
+              </IonFab>
             </div>
           )}
         </div>

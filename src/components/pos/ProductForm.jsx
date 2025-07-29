@@ -170,6 +170,7 @@ const ProductForm = ({ product = null, onClose = () => {} }) => {
               <IonRow className="ion-margin-top">
                 <IonCol size="12" sizeMd="6">
                   <IonButton 
+                    className="ion-color-primary-gradient"
                     expand="block" 
                     type="submit"
                     disabled={isLoading}
@@ -180,8 +181,8 @@ const ProductForm = ({ product = null, onClose = () => {} }) => {
                 {product && (
                   <IonCol size="12" sizeMd="6">
                     <IonButton 
+                      className="ion-color-primary-gradient"
                       expand="block" 
-                      fill="outline" 
                       onClick={onClose}
                       disabled={isLoading}
                     >

@@ -18,8 +18,6 @@ import {
 } from '@ionic/react';
 import {
   add,
-  heart,
-  heartOutline,
   refresh,
 } from 'ionicons/icons';
 import usePOSStore from '@/stores/posStore';
@@ -36,7 +34,6 @@ const OrderProductList = React.memo(() => {
   const [isLoading, setIsLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
-  const [favorites, setFavorites] = useState(new Set());
 
   useEffect(() => {
     const loadProductsData = async () => {
@@ -78,18 +75,6 @@ const OrderProductList = React.memo(() => {
       setShowToast(true);
     }
   }, [addToCart]);
-
-  const toggleFavorite = useCallback((productId) => {
-    setFavorites(prev => {
-      const newFavorites = new Set(prev);
-      if (newFavorites.has(productId)) {
-        newFavorites.delete(productId);
-      } else {
-        newFavorites.add(productId);
-      }
-      return newFavorites;
-    });
-  }, []);
 
   const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(searchText.toLowerCase())
@@ -156,16 +141,6 @@ const OrderProductList = React.memo(() => {
                       <IonCardTitle className="text-lg font-semibold">
                         {product.name}
                       </IonCardTitle>
-                      <IonButton
-                        fill="clear"
-                        size="small"
-                        onClick={() => toggleFavorite(product._id)}
-                      >
-                        <IonIcon
-                          icon={favorites.has(product._id) ? heart : heartOutline}
-                          color={favorites.has(product._id) ? 'danger' : 'medium'}
-                        />
-                      </IonButton>
                     </div>
                     
                     <div className="flex justify-between items-center mt-2">
@@ -183,7 +158,7 @@ const OrderProductList = React.memo(() => {
                       expand="block"
                       onClick={() => handleAddToCart(product)}
                       disabled={product.stock <= 0}
-                      className="touch-target"
+                      className="ion-color-primary-gradient touch-target"
                     >
                       <IonIcon icon={add} slot="start" />
                       {product.stock <= 0 ? 'Out of Stock' : 'Add to Cart'}
