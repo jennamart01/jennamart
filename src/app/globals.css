@@ -497,3 +497,14 @@ ion-button.ion-color-primary-gradient:hover::part(native) {
 ion-button.ion-color-primary-gradient:active::part(native) {
   background: linear-gradient(to right, #e09900ff, #e000b9ff); 
 }
+/* Alert button styling */
+.alert-button-confirm {
+  color: var(--ion-color-danger) !important;
+  font-weight: bold !important;
+}
+
+/* Danger zone styling */
+.danger-zone {
+  border: 2px solid var(--ion-color-danger);
+  background: var(--ion-color-danger-tint);
+}

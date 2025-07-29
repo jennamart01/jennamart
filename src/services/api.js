@@ -92,4 +92,124 @@ export class APIService {
       return false;
     }
   }
+
+  // Export/Import API
+  async exportAllData(selectedCollections = ['products', 'orders']) {
+    try {
+      const collectionsParam = selectedCollections.join(',');
+      const response = await fetch(`/api/export?collections=${collectionsParam}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      // Get filename from Content-Disposition header
+      const contentDisposition = response.headers.get('Content-Disposition');
+      let filename = 'jennamart-export.json';
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+        if (filenameMatch) {
+          filename = filenameMatch[1];
+        }
+      }
+      
+      const blob = await response.blob();
+      
+      // Create download link
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      return { 
+        success: true, 
+        message: 'Export completed successfully',
+        collections: selectedCollections,
+        filename: filename
+      };
+    } catch (error) {
+      console.error('Export failed:', error);
+      throw error;
+    }
+  }
+
+  async importProducts(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    try {
+      const response = await fetch('/api/import/products', {
+        method: 'POST',
+        body: formData,
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Import failed');
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('Import failed:', error);
+      throw error;
+    }
+  }
+
+  // Statistics API
+  async getStats() {
+    return this.request('/stats');
+  }
+
+  // Delete collections API
+  async deleteCollections(selectedCollections, dateRange = null) {
+    let url = `/api/delete-all?collections=${selectedCollections.join(',')}`;
+    
+    // Add date range parameters for orders
+    if (dateRange && selectedCollections.includes('orders')) {
+      if (dateRange.fromDate) {
+        url += `&fromDate=${dateRange.fromDate}`;
+      }
+      if (dateRange.toDate) {
+        url += `&toDate=${dateRange.toDate}`;
+      }
+    }
+    
+    try {
+      const response = await fetch(url, {
+        method: 'DELETE',
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Delete failed');
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('Delete failed:', error);
+      throw error;
+    }
+  }
+
+  // Order statistics API
+  async getOrderStats(dateRange = null) {
+    let url = '/api/orders/stats';
+    const params = new URLSearchParams();
+    
+    if (dateRange) {
+      if (dateRange.fromDate) params.append('fromDate', dateRange.fromDate);
+      if (dateRange.toDate) params.append('toDate', dateRange.toDate);
+    }
+    
+    if (params.toString()) {
+      url += `?${params.toString()}`;
+    }
+    
+    return this.request(url);
+  }
 }

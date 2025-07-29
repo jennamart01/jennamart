@@ -245,6 +245,57 @@ const usePOSStore = create(
       return false;
     }
   },
+
+  // Export/Import Actions
+  exportAllData: async (selectedCollections = ['products', 'orders']) => {
+    try {
+      const result = await api.exportAllData(selectedCollections);
+      return result;
+    } catch (error) {
+      console.error('Export failed:', error);
+      throw error;
+    }
+  },
+
+  importProducts: async (file) => {
+    try {
+      const result = await api.importProducts(file);
+      // Refresh products list after import
+      get().fetchProducts();
+      return result;
+    } catch (error) {
+      console.error('Import failed:', error);
+      throw error;
+    }
+  },
+
+  deleteCollections: async (selectedCollections, dateRange = null) => {
+    try {
+      const result = await api.deleteCollections(selectedCollections, dateRange);
+      // Refresh products list if products were deleted
+      if (selectedCollections.includes('products')) {
+        get().fetchProducts();
+      }
+      // Clear cart if products were deleted
+      if (selectedCollections.includes('products')) {
+        get().clearCart();
+      }
+      return result;
+    } catch (error) {
+      console.error('Delete collections failed:', error);
+      throw error;
+    }
+  },
+
+  getOrderStats: async (dateRange = null) => {
+    try {
+      const result = await api.getOrderStats(dateRange);
+      return result;
+    } catch (error) {
+      console.error('Get order stats failed:', error);
+      throw error;
+    }
+  },
 })));
 
 export default usePOSStore;
