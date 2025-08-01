@@ -18,8 +18,10 @@
       "Bash(node:*)",
       "Bash(curl:*)",
       "Bash(cp:*)",
-      "Bash(npx next:*)"
+      "Bash(npx next:*)",
+      "Bash(npm run:*)"
     ],
     "deny": []
-  }
+  },
+  "$schema": "https://json.schemastore.org/claude-code-settings.json"
 }

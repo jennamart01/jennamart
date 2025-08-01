@@ -202,7 +202,7 @@ const OrderHistory = () => {
                 <IonLabel>Sort by</IonLabel>
                 <IonSelect
                   value={sortBy}
-                  onSelectionChange={(e) => setSortBy(e.detail.value)}
+                  onIonChange={(e) => setSortBy(e.detail.value)}
                 >
                   <IonSelectOption value="newest">Newest First</IonSelectOption>
                   <IonSelectOption value="oldest">Oldest First</IonSelectOption>
