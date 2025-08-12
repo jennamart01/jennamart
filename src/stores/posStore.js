@@ -21,7 +21,7 @@ const usePOSStore = create(
   },
 
   // UI State
-  activeTab: 'products',
+  activeTab: 'order',
   printQueue: [],
 
   // Actions

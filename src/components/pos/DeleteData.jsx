@@ -36,9 +36,10 @@ import { formatRupiah } from '@/utils/currency';
 const api = new APIService();
 
 const DeleteData = () => {
-  const { deleteCollections, getOrderStats } = usePOSStore();
+  const { deleteCollections } = usePOSStore();
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  const [toastColor, setToastColor] = useState('success');
   const [isDeleting, setIsDeleting] = useState(false);
   const [stats, setStats] = useState(null);
   const [orderStats, setOrderStats] = useState(null);
@@ -53,34 +54,66 @@ const DeleteData = () => {
     fromDate: '',
     toDate: ''
   });
-  const [showFromDatePicker, setShowFromDatePicker] = useState(false);
-  const [showToDatePicker, setShowToDatePicker] = useState(false);
 
   useEffect(() => {
     fetchStats();
   }, []);
 
+  useEffect(() => {
+    // Refetch order stats when date range changes and orders is selected
+    if (selectedCollections.orders && (dateRange.fromDate || dateRange.toDate)) {
+      fetchOrderStats();
+    }
+  }, [dateRange.fromDate, dateRange.toDate, selectedCollections.orders]);
+
   const fetchStats = async () => {
     setIsLoadingStats(true);
     try {
-      const [generalStats, orderStatsData] = await Promise.all([
-        api.getStats(),
-        getOrderStats(dateRange.fromDate || dateRange.toDate ? dateRange : null)
-      ]);
+      const generalStats = await api.getStats();
       setStats(generalStats);
-      setOrderStats(orderStatsData);
+      
+      // Also fetch order stats
+      await fetchOrderStats();
     } catch (error) {
       console.error('Error fetching stats:', error);
+      showToastMessage('Failed to load statistics', 'danger');
     } finally {
       setIsLoadingStats(false);
     }
   };
 
+  const fetchOrderStats = async () => {
+    try {
+      const orderStatsData = await api.getOrderStats(
+        dateRange.fromDate || dateRange.toDate ? dateRange : null
+      );
+      setOrderStats(orderStatsData);
+    } catch (error) {
+      console.error('Error fetching order stats:', error);
+      showToastMessage('Failed to load order statistics', 'danger');
+    }
+  };
+
+  const showToastMessage = (message, color = 'success') => {
+    setToastMessage(message);
+    setToastColor(color);
+    setShowToast(true);
+  };
+
   const handleCollectionToggle = (collection) => {
-    setSelectedCollections(prev => ({
-      ...prev,
-      [collection]: !prev[collection]
-    }));
+    setSelectedCollections(prev => {
+      const newState = {
+        ...prev,
+        [collection]: !prev[collection]
+      };
+      
+      // If orders is being selected, fetch order stats
+      if (collection === 'orders' && !prev[collection]) {
+        setTimeout(() => fetchOrderStats(), 100);
+      }
+      
+      return newState;
+    });
   };
 
   const handleDateChange = (field, value) => {
@@ -89,15 +122,6 @@ const DeleteData = () => {
       [field]: value
     };
     setDateRange(newDateRange);
-    
-    // Refresh order stats when date changes
-    if (selectedCollections.orders) {
-      setTimeout(() => {
-        getOrderStats(newDateRange.fromDate || newDateRange.toDate ? newDateRange : null)
-          .then(setOrderStats)
-          .catch(console.error);
-      }, 500);
-    }
   };
 
   const getSafetyDate = () => {
@@ -107,15 +131,42 @@ const DeleteData = () => {
     return safetyDate.toISOString().split('T')[0];
   };
 
+  const validateDateRange = () => {
+    const safetyDate = getSafetyDate();
+    
+    if (dateRange.fromDate && dateRange.fromDate > safetyDate) {
+      showToastMessage(`From date cannot be within the last 7 days (after ${safetyDate})`, 'danger');
+      return false;
+    }
+    
+    if (dateRange.toDate && dateRange.toDate > safetyDate) {
+      showToastMessage(`To date cannot be within the last 7 days (after ${safetyDate})`, 'danger');
+      return false;
+    }
+    
+    if (dateRange.fromDate && dateRange.toDate && dateRange.fromDate > dateRange.toDate) {
+      showToastMessage('From date cannot be later than To date', 'danger');
+      return false;
+    }
+    
+    return true;
+  };
+
   const handleDelete = async () => {
     const collectionsToDelete = Object.keys(selectedCollections).filter(
       key => selectedCollections[key]
     );
     
     if (collectionsToDelete.length === 0) {
-      setToastMessage('Please select at least one collection to delete.');
-      setShowToast(true);
+      showToastMessage('Please select at least one collection to delete.', 'warning');
       return;
+    }
+
+    // Validate date range if orders are selected
+    if (collectionsToDelete.includes('orders') && (dateRange.fromDate || dateRange.toDate)) {
+      if (!validateDateRange()) {
+        return;
+      }
     }
 
     setIsDeleting(true);
@@ -125,19 +176,22 @@ const DeleteData = () => {
         : null;
         
       const result = await deleteCollections(collectionsToDelete, deleteParams);
-      setDeleteResult(result);
-      setToastMessage(`Successfully deleted ${result.totalDeleted} items from ${collectionsToDelete.length} collection(s)`);
-      setShowToast(true);
       
-      // Reset selections and refresh stats
-      setSelectedCollections({ products: false, orders: false });
-      setDateRange({ fromDate: '', toDate: '' });
-      await fetchStats();
+      if (result.success) {
+        setDeleteResult(result);
+        showToastMessage(`Successfully deleted ${result.totalDeleted} items from ${collectionsToDelete.length} collection(s)`, 'success');
+        
+        // Reset selections and refresh stats
+        setSelectedCollections({ products: false, orders: false });
+        setDateRange({ fromDate: '', toDate: '' });
+        await fetchStats();
+      } else {
+        throw new Error(result.error || 'Delete operation failed');
+      }
       
     } catch (error) {
       console.error('Delete error:', error);
-      setToastMessage(`Failed to delete data: ${error.message}`);
-      setShowToast(true);
+      showToastMessage(`Failed to delete data: ${error.message}`, 'danger');
     } finally {
       setIsDeleting(false);
       setShowConfirmAlert(false);
@@ -166,12 +220,32 @@ const DeleteData = () => {
   const getTotalItemsToDelete = () => {
     if (!stats) return 0;
     let total = 0;
-    if (selectedCollections.products) total += stats.collections.products.count;
-    if (selectedCollections.orders) {
-      // Use deletable count from order stats if available
-      total += orderStats?.deletable.count || 0;
+    
+    if (selectedCollections.products && stats.collections?.products) {
+      total += stats.collections.products.count || 0;
     }
+    
+    if (selectedCollections.orders && orderStats?.deletable) {
+      total += orderStats.deletable.count || 0;
+    }
+    
     return total;
+  };
+
+  const getProductsCount = () => {
+    return stats?.collections?.products?.count || 0;
+  };
+
+  const getOrdersCount = () => {
+    return stats?.collections?.orders?.count || 0;
+  };
+
+  const getDeletableOrdersCount = () => {
+    return orderStats?.deletable?.count || 0;
+  };
+
+  const getProtectedOrdersCount = () => {
+    return orderStats?.safetyPeriod?.ordersInSafetyPeriod || 0;
   };
 
   return (
@@ -245,11 +319,11 @@ const DeleteData = () => {
                             <IonSkeletonText animated style={{ width: '60px', height: '20px' }} />
                           ) : (
                             <>
-                              <IonBadge color={stats?.collections.products.count > 0 ? 'danger' : 'medium'}>
-                                {stats?.collections.products.count || 0} items
+                              <IonBadge color={getProductsCount() > 0 ? 'danger' : 'medium'}>
+                                {getProductsCount()} items
                               </IonBadge>
                               <div className="text-xs text-gray-500 mt-1">
-                                Updated: {formatDate(stats?.collections.products.lastUpdated)}
+                                Updated: {formatDate(stats?.collections?.products?.lastUpdated)}
                               </div>
                               <div className="text-xs text-orange-600 font-medium">
                                 ⚡ Immediate deletion
@@ -282,14 +356,14 @@ const DeleteData = () => {
                             <IonSkeletonText animated style={{ width: '60px', height: '20px' }} />
                           ) : (
                             <>
-                              <IonBadge color={orderStats?.deletable.count > 0 ? 'danger' : 'medium'}>
-                                {orderStats?.deletable.count || 0} deletable
+                              <IonBadge color={getDeletableOrdersCount() > 0 ? 'danger' : 'medium'}>
+                                {getDeletableOrdersCount()} deletable
                               </IonBadge>
                               <div className="text-xs text-gray-500 mt-1">
-                                Total: {stats?.collections.orders.count || 0} orders
+                                Total: {getOrdersCount()} orders
                               </div>
                               <div className="text-xs text-red-500">
-                                Protected: {orderStats?.safetyPeriod.ordersInSafetyPeriod || 0} (last 7 days)
+                                Protected: {getProtectedOrdersCount()} (last 7 days)
                               </div>
                             </>
                           )}
@@ -351,31 +425,31 @@ const DeleteData = () => {
                           <div className="p-2 bg-blue-50 rounded">
                             <div className="font-medium text-blue-800">Deletable Orders</div>
                             <div className="text-blue-600">
-                              {orderStats.deletable.count} orders
+                              {orderStats.deletable?.count || 0} orders
                             </div>
                             <div className="text-xs text-blue-500">
-                              Revenue: {formatRupiah(orderStats.deletable.revenue)}
+                              Revenue: {formatRupiah(orderStats.deletable?.revenue || 0)}
                             </div>
                           </div>
                           
                           <div className="p-2 bg-red-50 rounded">
                             <div className="font-medium text-red-800">Protected Orders</div>
                             <div className="text-red-600">
-                              {orderStats.safetyPeriod.ordersInSafetyPeriod} orders
+                              {orderStats.safetyPeriod?.ordersInSafetyPeriod || 0} orders
                             </div>
                             <div className="text-xs text-red-500">
                               (Last 7 days - Cannot delete)
                             </div>
                           </div>
                           
-                          {(dateRange.fromDate || dateRange.toDate) && (
+                          {(dateRange.fromDate || dateRange.toDate) && orderStats.dateRange && (
                             <div className="p-2 bg-gray-50 rounded">
                               <div className="font-medium text-gray-800">In Date Range</div>
                               <div className="text-gray-600">
-                                {orderStats.dateRange.ordersInRange} orders
+                                {orderStats.dateRange.ordersInRange || 0} orders
                               </div>
                               <div className="text-xs text-gray-500">
-                                Revenue: {formatRupiah(orderStats.dateRange.revenueInRange)}
+                                Revenue: {formatRupiah(orderStats.dateRange.revenueInRange || 0)}
                               </div>
                             </div>
                           )}
@@ -397,7 +471,7 @@ const DeleteData = () => {
                           <div className="flex items-center gap-2">
                             <span className="text-orange-600">⚡</span>
                             <span className="text-red-800">
-                              <strong>{stats.collections.products.count} products</strong> will be deleted immediately (no restrictions)
+                              <strong>{getProductsCount()} products</strong> will be deleted immediately (no restrictions)
                             </span>
                           </div>
                         )}
@@ -405,15 +479,15 @@ const DeleteData = () => {
                           <div className="flex items-center gap-2">
                             <span className="text-blue-600">🛡️</span>
                             <span className="text-red-800">
-                              <strong>{orderStats.deletable.count} orders</strong> will be deleted (excluding {orderStats.safetyPeriod.ordersInSafetyPeriod} protected orders from last 7 days)
+                              <strong>{getDeletableOrdersCount()} orders</strong> will be deleted (excluding {getProtectedOrdersCount()} protected orders from last 7 days)
                             </span>
                           </div>
                         )}
                       </div>
                     )}
-                    {selectedCollections.orders && orderStats && orderStats.deletable.count > 0 && (
+                    {selectedCollections.orders && orderStats && getDeletableOrdersCount() > 0 && (
                       <p className="text-xs text-red-600 mt-2">
-                        Revenue impact: {formatRupiah(orderStats.deletable.revenue)} will be permanently lost
+                        Revenue impact: {formatRupiah(orderStats.deletable?.revenue || 0)} will be permanently lost
                       </p>
                     )}
                   </div>
@@ -447,12 +521,12 @@ const DeleteData = () => {
                     <span className="font-semibold text-green-800">Delete Completed</span>
                   </div>
                   <div className="text-sm text-green-700">
-                    <p>✅ Total deleted: {deleteResult.totalDeleted} items</p>
-                    {deleteResult.results.products && (
-                      <p>📦 Products: {deleteResult.results.products.deletedCount} deleted</p>
+                    <p>✅ Total deleted: {deleteResult.totalDeleted || 0} items</p>
+                    {deleteResult.results?.products && (
+                      <p>📦 Products: {deleteResult.results.products.deletedCount || 0} deleted</p>
                     )}
-                    {deleteResult.results.orders && (
-                      <p>📋 Orders: {deleteResult.results.orders.deletedCount} deleted</p>
+                    {deleteResult.results?.orders && (
+                      <p>📋 Orders: {deleteResult.results.orders.deletedCount || 0} deleted</p>
                     )}
                   </div>
                 </div>
@@ -469,11 +543,11 @@ const DeleteData = () => {
         header="⚠️ Confirm Deletion"
         message={`Are you absolutely sure you want to permanently delete ${getTotalItemsToDelete()} items from ${getSelectedCollectionNames().join(' and ')} collection(s)?${
           selectedCollections.products && stats
-            ? `\n\n⚡ PRODUCTS: ${stats.collections.products.count} products will be deleted IMMEDIATELY (no restrictions)`
+            ? `\n\n⚡ PRODUCTS: ${getProductsCount()} products will be deleted IMMEDIATELY (no restrictions)`
             : ''
         }${
           selectedCollections.orders && orderStats 
-            ? `\n\n🛡️ ORDERS: ${orderStats.deletable.count} orders will be deleted (${orderStats.safetyPeriod.ordersInSafetyPeriod} recent orders are protected).${
+            ? `\n\n🛡️ ORDERS: ${getDeletableOrdersCount()} orders will be deleted (${getProtectedOrdersCount()} recent orders are protected).${
                 dateRange.fromDate || dateRange.toDate 
                   ? `\nDate range: ${dateRange.fromDate || 'Beginning'} to ${dateRange.toDate || getSafetyDate()}`
                   : ''
@@ -499,7 +573,7 @@ const DeleteData = () => {
         message={toastMessage}
         duration={4000}
         position="top"
-        color={toastMessage.includes('Failed') || toastMessage.includes('failed') ? 'danger' : 'success'}
+        color={toastColor}
       />
     </>
   );

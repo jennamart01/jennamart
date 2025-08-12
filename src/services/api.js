@@ -198,7 +198,7 @@ export class APIService {
 
   // Order statistics API
   async getOrderStats(dateRange = null) {
-    let url = '/api/orders/stats';
+    let url = '/orders/stats';
     const params = new URLSearchParams();
     
     if (dateRange) {
