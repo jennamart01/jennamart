@@ -2,6 +2,37 @@
 
 All notable changes to the Jennamart POS system will be documented in this file.
 
+## [2.0.1] - 2025-08-12
+
+### 🔧 Bug Fixes & Improvements
+
+#### Routing & Navigation
+- **Fixed Default Landing Page**: Changed from products page to order page for better POS workflow
+- **Improved User Experience**: Order processing is now the primary focus when opening the app
+
+#### DeleteData Component Overhaul
+- **Fixed Stats Loading Issues**: Resolved null pointer exceptions and improved error handling
+- **Enhanced Data Safety**: Better validation for date ranges and collection selections
+- **Improved User Feedback**: Added proper toast messages with color coding (success, warning, danger)
+- **Better Error Messages**: More descriptive error messages for failed operations
+
+#### API Service Fixes
+- **Fixed 404 Errors**: Resolved double `/api/` prefix issue in order stats endpoint
+- **Improved URL Construction**: Consistent URL handling across all API methods
+- **Better Error Handling**: Enhanced error propagation and user feedback
+
+#### Code Quality Improvements
+- **Null Safety**: Added comprehensive null checks throughout the application
+- **State Management**: Better handling of loading states and data updates
+- **Component Reliability**: More robust component lifecycle management
+
+### 🎯 Technical Details
+- Fixed `getOrderStats` API endpoint from `/api/api/orders/stats` to `/api/orders/stats`
+- Enhanced DeleteData component with proper async/await error handling
+- Improved stats fetching with separate general and order statistics calls
+- Added date range validation to prevent deletion of protected orders
+- Better separation of concerns in API service methods
+
 ## [2.0.0] - 2025-07-29
 
 ### 🚀 Major Features Added
