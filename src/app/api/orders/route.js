@@ -6,9 +6,31 @@ const db = new DatabaseService();
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
-    const filter = Object.fromEntries(searchParams);
+    const limit = parseInt(searchParams.get('limit')) || 0;
+    const sort = searchParams.get('sort') || 'createdAt';
+    const order = searchParams.get('order') || 'desc';
     
-    const orders = await db.getOrders(filter);
+    // Remove pagination/sorting params from filter
+    const filter = Object.fromEntries(searchParams);
+    delete filter.limit;
+    delete filter.sort;
+    delete filter.order;
+    
+    const database = await db.getDatabase();
+    
+    // Build query
+    let query = database.collection('orders').find(filter);
+    
+    // Apply sorting
+    const sortOrder = order === 'desc' ? -1 : 1;
+    query = query.sort({ [sort]: sortOrder });
+    
+    // Apply limit if specified
+    if (limit > 0) {
+      query = query.limit(limit);
+    }
+    
+    const orders = await query.toArray();
     return NextResponse.json(orders);
   } catch (error) {
     console.error('Error fetching orders:', error);

@@ -212,4 +212,135 @@ export class APIService {
     
     return this.request(url);
   }
+
+  // Sales Reports API
+  async getSalesStats(dateFilter = null) {
+    let url = '/sales/stats';
+    const params = new URLSearchParams();
+    
+    if (dateFilter) {
+      if (dateFilter.fromDate) params.append('fromDate', dateFilter.fromDate.toISOString());
+      if (dateFilter.toDate) params.append('toDate', dateFilter.toDate.toISOString());
+    }
+    
+    if (params.toString()) {
+      url += `?${params.toString()}`;
+    }
+    
+    return this.request(url);
+  }
+
+  async getTopProducts(dateFilter = null, limit = 10) {
+    let url = '/sales/top-products';
+    const params = new URLSearchParams();
+    
+    if (dateFilter) {
+      if (dateFilter.fromDate) params.append('fromDate', dateFilter.fromDate.toISOString());
+      if (dateFilter.toDate) params.append('toDate', dateFilter.toDate.toISOString());
+    }
+    
+    params.append('limit', limit.toString());
+    
+    if (params.toString()) {
+      url += `?${params.toString()}`;
+    }
+    
+    return this.request(url);
+  }
+
+  async getDailySales(dateFilter = null) {
+    let url = '/sales/daily';
+    const params = new URLSearchParams();
+    
+    if (dateFilter) {
+      if (dateFilter.fromDate) params.append('fromDate', dateFilter.fromDate.toISOString());
+      if (dateFilter.toDate) params.append('toDate', dateFilter.toDate.toISOString());
+    }
+    
+    if (params.toString()) {
+      url += `?${params.toString()}`;
+    }
+    
+    return this.request(url);
+  }
+
+  async getMonthlySales(limit = 12) {
+    let url = '/sales/monthly';
+    const params = new URLSearchParams();
+    params.append('limit', limit.toString());
+    
+    if (params.toString()) {
+      url += `?${params.toString()}`;
+    }
+    
+    return this.request(url);
+  }
+
+  async getRecentOrders(limit = 10) {
+    let url = '/orders';
+    const params = new URLSearchParams();
+    params.append('limit', limit.toString());
+    params.append('sort', 'createdAt');
+    params.append('order', 'desc');
+    
+    if (params.toString()) {
+      url += `?${params.toString()}`;
+    }
+    
+    return this.request(url);
+  }
+
+  async exportSalesReport(dateFilter = null, reportType = 'overview') {
+    try {
+      let url = '/api/sales/export';
+      const params = new URLSearchParams();
+      
+      if (dateFilter) {
+        if (dateFilter.fromDate) params.append('fromDate', dateFilter.fromDate.toISOString());
+        if (dateFilter.toDate) params.append('toDate', dateFilter.toDate.toISOString());
+      }
+      
+      params.append('type', reportType);
+      
+      if (params.toString()) {
+        url += `?${params.toString()}`;
+      }
+      
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      // Get filename from Content-Disposition header
+      const contentDisposition = response.headers.get('Content-Disposition');
+      let filename = `sales-report-${reportType}.json`;
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+        if (filenameMatch) {
+          filename = filenameMatch[1];
+        }
+      }
+      
+      const blob = await response.blob();
+      
+      // Create download link
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = downloadUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(downloadUrl);
+      document.body.removeChild(a);
+      
+      return { 
+        success: true, 
+        message: 'Sales report exported successfully',
+        filename: filename
+      };
+    } catch (error) {
+      console.error('Export sales report failed:', error);
+      throw error;
+    }
+  }
 }

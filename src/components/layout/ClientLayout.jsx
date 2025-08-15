@@ -40,6 +40,7 @@ import OrderHistory from '@/components/pos/OrderHistory';
 import ExportData from '@/components/pos/ExportData';
 import ImportProducts from '@/components/pos/ImportProducts';
 import DeleteData from '@/components/pos/DeleteData';
+import SalesReports from '@/components/pos/SalesReports';
 
 // Initialize Ionic only on client side
 if (typeof window !== 'undefined') {
@@ -66,18 +67,7 @@ const ClientLayout = () => {
       case 'orders':
         return <OrderHistory />;
       case 'reports':
-        return (
-          <div className="flex items-center justify-center h-full text-center p-8">
-            <div>
-              <h2 className="text-2xl font-semibold text-gray-600 mb-2">
-                Sales Reports
-              </h2>
-              <p className="text-gray-500">
-                Coming soon - Analytics and reporting
-              </p>
-            </div>
-          </div>
-        );
+        return <SalesReports />;
       case 'export':
         return <ExportData />;
       case 'import':
@@ -100,7 +90,7 @@ const ClientLayout = () => {
       case 'orders':
         return 'Order History';
       case 'reports':
-        return 'Reports';
+        return 'Sales Reports';
       case 'export':
         return 'Export Data';
       case 'import':
