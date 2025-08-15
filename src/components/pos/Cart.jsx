@@ -72,7 +72,20 @@ const Cart = () => {
       const result = await processOrder({
         customerName: customerName.trim()
       });
-      setToastMessage('Order processed successfully!');
+      
+      // Create order object for printing
+      const printOrder = {
+        items: currentOrder.items,
+        total: currentOrder.total,
+        customerName: customerName.trim(),
+        orderNumber: `ORD-${Date.now()}`,
+        createdAt: new Date(),
+      };
+      
+      // Print receipt automatically
+      printReceipt(printOrder);
+      
+      setToastMessage('Order processed successfully! Receipt printed.');
       setShowToast(true);
       setShowCheckoutAlert(false);
       setCustomerName(''); // Clear customer name after successful order
@@ -310,7 +323,7 @@ const Cart = () => {
             {/* Action Buttons */}
             <IonGrid>
               <IonRow>
-                <IonCol size="12" sizeMd="6">
+                <IonCol size="12" sizeMd="4">
                   <IonButton
                     className="ion-color-primary-gradient"
                     expand="block"
@@ -321,7 +334,28 @@ const Cart = () => {
                     Clear Cart
                   </IonButton>
                 </IonCol>
-                <IonCol size="12" sizeMd="6">
+                <IonCol size="12" sizeMd="4">
+                  <IonButton
+                    className="ion-color-primary-gradient"
+                    expand="block"
+                    onClick={() => {
+                      // Test print with current cart
+                      const testOrder = {
+                        items: currentOrder.items,
+                        total: currentOrder.total,
+                        customerName: customerName.trim() || 'Test Customer',
+                        orderNumber: `TEST-${Date.now()}`,
+                        createdAt: new Date(),
+                      };
+                      printReceipt(testOrder);
+                    }}
+                    disabled={isProcessing || currentOrder.items.length === 0}
+                  >
+                    <IonIcon icon={print} slot="start" />
+                    Test Print
+                  </IonButton>
+                </IonCol>
+                <IonCol size="12" sizeMd="4">
                   <IonButton
                     className="ion-color-primary-gradient"
                     expand="block"

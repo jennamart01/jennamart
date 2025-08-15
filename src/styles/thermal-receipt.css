@@ -1,0 +1,301 @@
+/* Thermal Receipt Styles for 58mm x Auto Height Paper */
+
+@page {
+  size: 58mm auto;
+  margin: 0;
+  padding: 0;
+}
+
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  body {
+    width: 58mm !important;
+    max-width: 58mm !important;
+    min-width: 58mm !important;
+    margin: 0 !important;
+    padding: 5px !important;
+    font-family: 'Courier New', 'Consolas', monospace !important;
+    font-size: 10px !important;
+    line-height: 1.1 !important;
+    color: #000 !important;
+    background: white !important;
+    box-sizing: border-box !important;
+  }
+  
+  .thermal-receipt {
+    width: 100% !important;
+    max-width: 54mm !important;
+    margin: 0 !important;
+    padding: 5px !important;
+    height: auto !important;
+    min-height: auto !important;
+    position: relative !important;
+  }
+  
+  .thermal-receipt::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background-image: url('/icons/icon-192x192.png') !important;
+    background-repeat: no-repeat !important;
+    background-position: center center !important;
+    background-size: 40mm 40mm !important;
+    opacity: 0.2 !important;
+    z-index: -1 !important;
+    pointer-events: none !important;
+  }
+  
+  .receipt-header {
+    text-align: center !important;
+    margin-bottom: 2mm !important;
+    border-bottom: 1px dashed #000 !important;
+    padding-bottom: 1mm !important;
+  }
+  
+  .receipt-logo {
+    height: 16mm !important;
+    margin: auto;
+    display: block !important;
+  }
+  
+  .order-info {
+    font-size: 9px !important;
+    margin: 0.5mm 0 !important;
+    line-height: 1.1 !important;
+    text-align: center !important;
+  }
+  
+  .receipt-items {
+    margin: 1mm 0 !important;
+  }
+  
+  .receipt-item {
+    margin: 0.5mm 0 !important;
+    font-size: 10px !important;
+    line-height: 1.1 !important;
+  }
+  
+  .item-line {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    margin: 0.3mm 0 !important;
+  }
+  
+  .item-name {
+    flex: 1 !important;
+    margin-right: 2mm !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    hyphens: auto !important;
+  }
+  
+  .item-qty-price {
+    text-align: right !important;
+    white-space: nowrap !important;
+    font-size: 10px !important;
+  }
+  
+  .item-total {
+    text-align: right !important;
+    white-space: nowrap !important;
+    font-weight: bold !important;
+    margin-left: auto !important;
+  }
+  
+  .receipt-separator {
+    border-top: 1px dashed #000 !important;
+    margin: 1.5mm 0 !important;
+    height: 0 !important;
+  }
+  
+  .receipt-total {
+    margin: 1mm 0 !important;
+    font-weight: bold !important;
+  }
+  
+  .total-line {
+    display: flex !important;
+    justify-content: space-between !important;
+    font-size: 12px !important;
+    font-weight: bold !important;
+    margin: 0.5mm 0 !important;
+  }
+  
+  .receipt-footer {
+    text-align: center !important;
+    margin-top: 2mm !important;
+    border-top: 1px dashed #000 !important;
+    padding-top: 1mm !important;
+    font-size: 10px !important;
+  }
+  
+  .thank-you {
+    font-weight: bold !important;
+    margin: 0.5mm 0 !important;
+    line-height: 1.1 !important;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+  
+  /* Hide scrollbars and other browser elements */
+  ::-webkit-scrollbar {
+    display: none !important;
+  }
+  
+  html, body {
+    overflow: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+}
+
+/* Screen styles for preview */
+@media screen {
+  .thermal-receipt {
+    width: 58mm;
+    max-width: 58mm;
+    margin: 10px auto;
+    padding: 5px;
+    font-family: 'Courier New', 'Consolas', monospace;
+    font-size: 10px;
+    line-height: 1.1;
+    color: #000;
+    background: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: relative;
+  }
+  
+  .thermal-receipt::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('/icons/icon-192x192.png');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 40mm 40mm;
+    opacity: 0.2;
+    z-index: -1;
+    pointer-events: none;
+  }
+  
+  .receipt-header {
+    text-align: center;
+    margin-bottom: 2mm;
+    border-bottom: 1px dashed #000;
+    padding-bottom: 1mm;
+  }
+  
+  .receipt-logo {
+    height: 16mm;
+    margin: auto;
+    display: block;
+  }
+  
+  .order-info {
+    font-size: 9px;
+    margin: 0.5mm 0;
+    line-height: 1.1;
+    text-align: center;
+  }
+  
+  .receipt-items {
+    margin: 1mm 0;
+  }
+  
+  .receipt-item {
+    margin: 0.5mm 0;
+    font-size: 10px;
+    line-height: 1.1;
+  }
+  
+  .item-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin: 0.3mm 0;
+  }
+  
+  .item-name {
+    flex: 1;
+    margin-right: 2mm;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+  
+  .item-qty-price {
+    text-align: right;
+    white-space: nowrap;
+    font-size: 10px;
+  }
+  
+  .item-total {
+    text-align: right;
+    white-space: nowrap;
+    font-weight: bold;
+    margin-left: auto;
+  }
+  
+  .receipt-separator {
+    border-top: 1px dashed #000;
+    margin: 1.5mm 0;
+    height: 0;
+  }
+  
+  .receipt-total {
+    margin: 1mm 0;
+    font-weight: bold;
+  }
+  
+  .total-line {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: bold;
+    margin: 0.5mm 0;
+  }
+  
+  .receipt-footer {
+    text-align: center;
+    margin-top: 2mm;
+    border-top: 1px dashed #000;
+    padding-top: 1mm;
+    font-size: 10px;
+  }
+  
+  .thank-you {
+    font-weight: bold;
+    margin: 0.5mm 0;
+    line-height: 1.1;
+  }
+  
+  .print-button {
+    margin: 5mm auto;
+    padding: 2mm 4mm;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 2mm;
+    cursor: pointer;
+    display: block;
+    font-size: 10px;
+  }
+  
+  .print-button:hover {
+    background: #0056b3;
+  }
+}

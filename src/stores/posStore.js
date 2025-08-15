@@ -188,37 +188,268 @@ const usePOSStore = create(
 
   // Print Actions
   printReceipt: (order) => {
-    // Browser print functionality
-    const printWindow = window.open('', '', 'width=300,height=600');
+    // Browser print functionality for 58mm thermal paper
+    const printWindow = window.open('', '', 'width=220,height=600');
     const receiptHTML = `
       <html>
         <head>
-          <title>Receipt</title>
+          <title>Receipt - Jennamart</title>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <style>
-            body { font-family: monospace; font-size: 12px; margin: 10px; }
-            .header { text-align: center; margin-bottom: 20px; }
-            .item { display: flex; justify-content: space-between; margin: 5px 0; }
-            .total { border-top: 1px solid #000; margin-top: 10px; padding-top: 10px; font-weight: bold; }
+            @page {
+              size: 58mm auto;
+              margin: 0;
+              padding: 0;
+            }
+            
+            @media print {
+              * {
+                -webkit-print-color-adjust: exact !important;
+                color-adjust: exact !important;
+                print-color-adjust: exact !important;
+              }
+              
+              body {
+                width: 58mm !important;
+                max-width: 58mm !important;
+                min-width: 58mm !important;
+                margin: 0 !important;
+                padding: 5px !important;
+                font-family: 'Courier New', 'Consolas', monospace !important;
+                font-size: 10px !important;
+                line-height: 1.1 !important;
+                color: #000 !important;
+                background: white !important;
+                box-sizing: border-box !important;
+              }
+              
+              .thermal-receipt {
+                height: auto !important;
+                min-height: auto !important;
+                max-height: none !important;
+                position: relative !important;
+              }
+              
+              .thermal-receipt::before {
+                content: '' !important;
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                bottom: 0 !important;
+                background-image: url('/icons/icon-192x192.png') !important;
+                background-repeat: no-repeat !important;
+                background-position: center center !important;
+                background-size: 40mm 40mm !important;
+                opacity: 0.2 !important;
+                z-index: -1 !important;
+                pointer-events: none !important;
+              }
+              
+              .no-print { display: none !important; }
+            }
+            
+            body {
+              width: 58mm;
+              max-width: 58mm;
+              margin: 0 auto;
+              padding: 5px;
+              font-family: 'Courier New', 'Consolas', monospace;
+              font-size: 10px;
+              line-height: 1.1;
+              color: #000;
+              background: white;
+              box-sizing: border-box;
+            }
+            
+            .thermal-receipt {
+              width: 100%;
+              max-width: 54mm;
+              margin: 0;
+              padding: 5px;
+              height: auto;
+              min-height: auto;
+              position: relative;
+            }
+            
+            .thermal-receipt::before {
+              content: '';
+              position: absolute;
+              top: 0;
+              left: 0;
+              right: 0;
+              bottom: 0;
+              background-image: url('/icons/icon-192x192.png');
+              background-repeat: no-repeat;
+              background-position: center center;
+              background-size: 40mm 40mm;
+              opacity: 0.2;
+              z-index: -1;
+              pointer-events: none;
+            }
+              width: 100%;
+              max-width: 54mm;
+              margin: 0;
+              padding: 0;
+            }
+            
+            .receipt-header {
+              text-align: center;
+              margin-bottom: 2mm;
+              border-bottom: 1px dashed #000;
+              padding-bottom: 1mm;
+            }
+            
+            .receipt-logo {
+              height: 16mm;
+              margin: auto;
+              display: block;
+            }
+            
+            .order-info {
+              font-size: 9px;
+              margin: 0.5mm 0;
+              line-height: 1.1;
+              text-align: center;
+            }
+            
+            .receipt-items {
+              margin: 1mm 0;
+            }
+            
+            .receipt-item {
+              margin: 0.5mm 0;
+              font-size: 10px;
+              line-height: 1.1;
+            }
+            
+            .item-line {
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-start;
+              margin: 0.3mm 0;
+            }
+            
+            .item-name {
+              flex: 1;
+              margin-right: 2mm;
+              word-wrap: break-word;
+              overflow-wrap: break-word;
+              hyphens: auto;
+            }
+            
+            .item-qty-price {
+              text-align: right;
+              white-space: nowrap;
+              font-size: 10px;
+            }
+            
+            .item-total {
+              text-align: right;
+              white-space: nowrap;
+              font-weight: bold;
+              margin-left: auto;
+            }
+            
+            .receipt-separator {
+              border-top: 1px dashed #000;
+              margin: 1.5mm 0;
+              height: 0;
+            }
+            
+            .receipt-total {
+              margin: 1mm 0;
+              font-weight: bold;
+            }
+            
+            .total-line {
+              display: flex;
+              justify-content: space-between;
+              font-size: 12px;
+              font-weight: bold;
+              margin: 0.5mm 0;
+            }
+            
+            .receipt-footer {
+              text-align: center;
+              margin-top: 2mm;
+              border-top: 1px dashed #000;
+              padding-top: 1mm;
+              font-size: 10px;
+            }
+            
+            .thank-you {
+              font-weight: bold;
+              margin: 0.5mm 0;
+              line-height: 1.1;
+            }
+            
+            .print-button {
+              margin: 5mm auto;
+              padding: 2mm 4mm;
+              background: #007bff;
+              color: white;
+              border: none;
+              border-radius: 2mm;
+              cursor: pointer;
+              display: block;
+              font-size: 10px;
+            }
+            
+            .print-button:hover {
+              background: #0056b3;
+            }
           </style>
         </head>
         <body>
-          <div class="header">
-            <h2>Jennamart</h2>
-            <p>Order #${order.orderNumber}</p>
-            <p>${new Date(order.createdAt).toLocaleString()}</p>
-            <p>Customer: ${order.customerName || 'Guest'}</p>
-          </div>
-          ${order.items.map(item => `
-            <div class="item">
-              <span>${item.name} x${item.quantity}</span>
-              <span>${formatRupiah(item.price * item.quantity)}</span>
+          <div class="thermal-receipt">
+            <div class="receipt-header">
+              <img src="/icons/logo-print.png" alt="Jennamart Logo" class="receipt-logo" />
+              <div class="order-info">Order #${order.orderNumber}</div>
+              <div class="order-info">${new Date(order.createdAt).toLocaleDateString('id-ID', {
+                day: '2-digit',
+                month: '2-digit', 
+                year: 'numeric'
+              })} ${new Date(order.createdAt).toLocaleTimeString('id-ID', {
+                hour: '2-digit',
+                minute: '2-digit'
+              })}</div>
+              <div class="order-info">Customer: ${order.customerName || 'Guest'}</div>
             </div>
-          `).join('')}
-          <div class="total">
-            <div class="item">
-              <span>Total:</span>
-              <span>${formatRupiah(order.total)}</span>
+            
+            <div class="receipt-separator"></div>
+            
+            <div class="receipt-items">
+              ${order.items.map(item => `
+                <div class="receipt-item">
+                  <div class="item-line">
+                    <div class="item-name">${item.name}</div>
+                    <div class="item-qty-price">${item.quantity}x ${formatRupiah(item.price)}</div>
+                  </div>
+                  <div class="item-line">
+                    <div class="item-name"></div>
+                    <div class="item-total">${formatRupiah(item.price * item.quantity)}</div>
+                  </div>
+                </div>
+              `).join('')}
             </div>
+            
+            <div class="receipt-separator"></div>
+            
+            <div class="receipt-total">
+              <div class="total-line">
+                <span>TOTAL:</span>
+                <span>${formatRupiah(order.total)}</span>
+              </div>
+            </div>
+            
+            <div class="receipt-footer">
+              <div class="thank-you">Terima kasih sudah berbelanja</div>
+              <div class="thank-you">di Jennamart</div>
+            </div>
+            
+            <button class="print-button no-print" onclick="window.print(); window.close();">Print Receipt</button>
           </div>
         </body>
       </html>
@@ -226,8 +457,11 @@ const usePOSStore = create(
     
     printWindow.document.write(receiptHTML);
     printWindow.document.close();
-    printWindow.print();
-    printWindow.close();
+    
+    // Auto print after a short delay to ensure content is loaded
+    setTimeout(() => {
+      printWindow.print();
+    }, 500);
 
     // Remove from print queue
     set(state => ({
