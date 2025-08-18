@@ -188,8 +188,17 @@ const usePOSStore = create(
 
   // Print Actions
   printReceipt: (order) => {
-    // Browser print functionality for 58mm thermal paper
-    const printWindow = window.open('', '', 'width=220,height=600');
+    // Create hidden iframe for printing without opening new window
+    const printFrame = document.createElement('iframe');
+    printFrame.style.position = 'absolute';
+    printFrame.style.top = '-1000px';
+    printFrame.style.left = '-1000px';
+    printFrame.style.width = '58mm';
+    printFrame.style.height = '1px';
+    printFrame.style.visibility = 'hidden';
+    
+    document.body.appendChild(printFrame);
+    
     const receiptHTML = `
       <html>
         <head>
@@ -246,8 +255,6 @@ const usePOSStore = create(
                 z-index: -1 !important;
                 pointer-events: none !important;
               }
-              
-              .no-print { display: none !important; }
             }
             
             body {
@@ -287,11 +294,6 @@ const usePOSStore = create(
               opacity: 0.2;
               z-index: -1;
               pointer-events: none;
-            }
-              width: 100%;
-              max-width: 54mm;
-              margin: 0;
-              padding: 0;
             }
             
             .receipt-header {
@@ -384,22 +386,6 @@ const usePOSStore = create(
               margin: 0.5mm 0;
               line-height: 1.1;
             }
-            
-            .print-button {
-              margin: 5mm auto;
-              padding: 2mm 4mm;
-              background: #007bff;
-              color: white;
-              border: none;
-              border-radius: 2mm;
-              cursor: pointer;
-              display: block;
-              font-size: 10px;
-            }
-            
-            .print-button:hover {
-              background: #0056b3;
-            }
           </style>
         </head>
         <body>
@@ -448,19 +434,37 @@ const usePOSStore = create(
               <div class="thank-you">Terima kasih sudah berbelanja</div>
               <div class="thank-you">di Jennamart</div>
             </div>
-            
-            <button class="print-button no-print" onclick="window.print(); window.close();">Print Receipt</button>
           </div>
         </body>
       </html>
     `;
     
-    printWindow.document.write(receiptHTML);
-    printWindow.document.close();
+    // Write content to iframe
+    const frameDoc = printFrame.contentDocument || printFrame.contentWindow.document;
+    frameDoc.open();
+    frameDoc.write(receiptHTML);
+    frameDoc.close();
     
-    // Auto print after a short delay to ensure content is loaded
+    // Wait for content to load, then print and cleanup
     setTimeout(() => {
-      printWindow.print();
+      try {
+        // Focus the iframe and print
+        printFrame.contentWindow.focus();
+        printFrame.contentWindow.print();
+        
+        // Clean up iframe after printing
+        setTimeout(() => {
+          if (printFrame.parentNode) {
+            document.body.removeChild(printFrame);
+          }
+        }, 1000);
+      } catch (error) {
+        console.error('Print error:', error);
+        // Fallback: remove iframe even if print fails
+        if (printFrame.parentNode) {
+          document.body.removeChild(printFrame);
+        }
+      }
     }, 500);
 
     // Remove from print queue
