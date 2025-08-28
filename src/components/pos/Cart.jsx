@@ -37,6 +37,7 @@ const Cart = () => {
     clearCart,
     processOrder,
     printReceipt,
+    autoPrint,
   } = usePOSStore();
 
   const [showClearAlert, setShowClearAlert] = useState(false);
@@ -82,10 +83,14 @@ const Cart = () => {
         createdAt: new Date(),
       };
       
-      // Print receipt automatically
-      printReceipt(printOrder);
+      // Auto-print receipt if enabled
+      if (autoPrint) {
+        printReceipt(printOrder);
+        setToastMessage('Order processed successfully! Receipt printed.');
+      } else {
+        setToastMessage('Order processed successfully!');
+      }
       
-      setToastMessage('Order processed successfully! Receipt printed.');
       setShowToast(true);
       setShowCheckoutAlert(false);
       setCustomerName(''); // Clear customer name after successful order

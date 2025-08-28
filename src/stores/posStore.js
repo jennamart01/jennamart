@@ -23,9 +23,12 @@ const usePOSStore = create(
   // UI State
   activeTab: 'order',
   printQueue: [],
+  autoPrint: true,
 
   // Actions
   setActiveTab: (tab) => set({ activeTab: tab }),
+  
+  setAutoPrint: (enabled) => set({ autoPrint: enabled }),
   
   setProductFilter: (filter) => set({ productFilter: filter }),
 
