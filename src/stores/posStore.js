@@ -21,7 +21,7 @@ const usePOSStore = create(
   },
 
   // UI State
-  activeTab: 'order',
+  activeTab: 'products',
   printQueue: [],
   autoPrint: true,
 
@@ -205,7 +205,7 @@ const usePOSStore = create(
     const receiptHTML = `
       <html>
         <head>
-          <title>Receipt - Jennamart</title>
+          <title>Jennamart - ${order.customerName || 'Customer'}</title>
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <style>
