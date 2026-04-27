@@ -32,7 +32,7 @@ import usePOSStore from '@/stores/posStore';
 import { formatRupiah } from '@/utils/currency';
 
 const OrderHistory = () => {
-  const { printReceipt } = usePOSStore();
+  const { printReceipt, isPrinting } = usePOSStore();
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchText, setSearchText] = useState('');
@@ -154,9 +154,10 @@ const OrderHistory = () => {
                 className="ion-color-primary-gradient"
                 expand="block"
                 onClick={() => handlePrintReceipt(order)}
+                disabled={isPrinting}
               >
                 <IonIcon icon={print} slot="start" />
-                Print Receipt
+                {isPrinting ? 'Printing...' : 'Print Receipt'}
               </IonButton>
             </IonCol>
           </IonRow>

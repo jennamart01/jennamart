@@ -24,6 +24,7 @@ const usePOSStore = create(
   activeTab: 'products',
   printQueue: [],
   autoPrint: true,
+  isPrinting: false,
 
   // Actions
   setActiveTab: (tab) => set({ activeTab: tab }),
@@ -191,8 +192,21 @@ const usePOSStore = create(
 
   // Print Actions
   printReceipt: (order) => {
+    const { isPrinting } = get();
+    if (isPrinting) {
+      console.warn('Print already in progress');
+      return;
+    }
+
+    set({ isPrinting: true });
+
+    // Create unique id for the iframe
+    const frameId = `print-iframe-${Date.now()}`;
+    
     // Create hidden iframe for printing without opening new window
     const printFrame = document.createElement('iframe');
+    printFrame.id = frameId;
+    printFrame.name = frameId;
     printFrame.style.position = 'absolute';
     printFrame.style.top = '-1000px';
     printFrame.style.left = '-1000px';
@@ -441,34 +455,55 @@ const usePOSStore = create(
         </body>
       </html>
     `;
-    
+
+    // Cleanup function
+    const cleanup = () => {
+      setTimeout(() => {
+        if (printFrame.parentNode) {
+          document.body.removeChild(printFrame);
+        }
+        set({ isPrinting: false });
+      }, 1000);
+    };
+
     // Write content to iframe
     const frameDoc = printFrame.contentDocument || printFrame.contentWindow.document;
     frameDoc.open();
     frameDoc.write(receiptHTML);
     frameDoc.close();
     
-    // Wait for content to load, then print and cleanup
-    setTimeout(() => {
+    // Use onload to trigger print
+    printFrame.onload = () => {
       try {
-        // Focus the iframe and print
         printFrame.contentWindow.focus();
+        
+        // Use onafterprint for cleanup if supported
+        printFrame.contentWindow.onafterprint = cleanup;
+        
         printFrame.contentWindow.print();
         
-        // Clean up iframe after printing
-        setTimeout(() => {
-          if (printFrame.parentNode) {
-            document.body.removeChild(printFrame);
-          }
-        }, 1000);
+        // Fallback cleanup if onafterprint isn't triggered (some browsers)
+        if (!printFrame.contentWindow.onafterprint) {
+          cleanup();
+        }
       } catch (error) {
         console.error('Print error:', error);
-        // Fallback: remove iframe even if print fails
-        if (printFrame.parentNode) {
-          document.body.removeChild(printFrame);
+        cleanup();
+      }
+    };
+
+    // If onload doesn't fire for some reason (e.g. cached content)
+    setTimeout(() => {
+      if (get().isPrinting) {
+        try {
+          printFrame.contentWindow.focus();
+          printFrame.contentWindow.print();
+          cleanup();
+        } catch (e) {
+          cleanup();
         }
       }
-    }, 500);
+    }, 2000);
 
     // Remove from print queue
     set(state => ({

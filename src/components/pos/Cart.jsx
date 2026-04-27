@@ -38,6 +38,7 @@ const Cart = () => {
     processOrder,
     printReceipt,
     autoPrint,
+    isPrinting,
   } = usePOSStore();
 
   const [showClearAlert, setShowClearAlert] = useState(false);
@@ -354,10 +355,10 @@ const Cart = () => {
                       };
                       printReceipt(testOrder);
                     }}
-                    disabled={isProcessing || currentOrder.items.length === 0}
+                    disabled={isProcessing || isPrinting || currentOrder.items.length === 0}
                   >
                     <IonIcon icon={print} slot="start" />
-                    Test Print
+                    {isPrinting ? 'Printing...' : 'Test Print'}
                   </IonButton>
                 </IonCol>
                 <IonCol size="12" sizeMd="4">
@@ -365,10 +366,10 @@ const Cart = () => {
                     className="ion-color-primary-gradient"
                     expand="block"
                     onClick={() => setShowCheckoutAlert(true)}
-                    disabled={isProcessing || !customerName.trim()}
+                    disabled={isProcessing || isPrinting || !customerName.trim()}
                   >
                     <IonIcon icon={checkmark} slot="start" />
-                    {isProcessing ? 'Processing...' : 'Checkout'}
+                    {isProcessing ? 'Processing...' : (isPrinting ? 'Printing...' : 'Checkout')}
                   </IonButton>
                 </IonCol>
               </IonRow>
