@@ -29,6 +29,7 @@ import {
   download,
   cloudUpload,
   trash,
+  chevronUp,
 } from 'ionicons/icons';
 import { setupIonicReact } from '@ionic/react';
 import usePOSStore from '@/stores/posStore';
@@ -50,10 +51,27 @@ if (typeof window !== 'undefined') {
 const ClientLayout = () => {
   const { activeTab, currentOrder, setActiveTab } = usePOSStore();
   const productListRef = useRef(null);
+  const contentRef = useRef(null);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   const handleMenuNavigation = async (tab) => {
     setActiveTab(tab);
     await menuController.close('main-menu');
+  };
+
+  const handleScroll = (e) => {
+    const scrollTop = e.detail.scrollTop;
+    if (scrollTop > 300) {
+      if (!showScrollTop) setShowScrollTop(true);
+    } else {
+      if (showScrollTop) setShowScrollTop(false);
+    }
+  };
+
+  const scrollToTop = () => {
+    if (contentRef.current) {
+      contentRef.current.scrollToTop(500);
+    }
   };
 
   const renderContent = () => {
@@ -159,7 +177,13 @@ const ClientLayout = () => {
           </IonToolbar>
         </IonHeader>
         
-        <IonContent className="pos-content" padding={0}>
+        <IonContent 
+          className="pos-content" 
+          padding={0} 
+          ref={contentRef}
+          scrollEvents={true}
+          onIonScroll={handleScroll}
+        >
           <div className="mobile-content-wrapper">
             {renderContent()}
           </div>
@@ -168,6 +192,15 @@ const ClientLayout = () => {
         <div className="safe-area-bottom">
           <TabBar />
           
+          {/* Scroll to Top Button */}
+          {showScrollTop && (
+            <IonFab vertical="bottom" horizontal="end" slot="fixed" style={{ marginBottom: '80px', marginRight: '10px' }}>
+              <IonFabButton color="light" size="small" onClick={scrollToTop} className="scroll-top-button">
+                <IonIcon icon={chevronUp} />
+              </IonFabButton>
+            </IonFab>
+          )}
+
           {/* Add Product Button - Only on products page */}
           {activeTab === 'products' && (
             <div className="add-product-button-container">
